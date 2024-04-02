@@ -58,7 +58,7 @@ dependencies {
 	implementation("org.springframework.kafka:spring-kafka")
 	implementation("org.springframework.session:spring-session-data-redis")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
-	implementation("io.github.cdimascio:java-dotenv")
+	implementation("io.github.cdimascio:java-dotenv:5.2.0")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")

@@ -45,3 +45,6 @@ postgres/data/*
 ### dotenv ###
 .env
 .env*
+
+### application ###
+application.*
