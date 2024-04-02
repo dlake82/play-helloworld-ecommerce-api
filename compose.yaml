@@ -1,21 +1,21 @@
 services:
   mongodb:
-    image: 'mongo:latest'
+    image: "mongo:latest"
     environment:
-      - 'MONGO_INITDB_DATABASE=mydatabase'
-      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
-      - 'MONGO_INITDB_ROOT_USERNAME=root'
+      - "MONGO_INITDB_DATABASE=mongodb"
+      - "MONGO_INITDB_ROOT_PASSWORD=mongodb"
+      - "MONGO_INITDB_ROOT_USERNAME=root"
     ports:
-      - '27017'
+      - "27017"
   postgres:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - "POSTGRES_DB=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+      - "POSTGRES_USER=postgres"
     ports:
-      - '5432'
+      - "5432"
   redis:
-    image: 'redis:latest'
+    image: "redis:latest"
     ports:
-      - '6379'
+      - "6379"

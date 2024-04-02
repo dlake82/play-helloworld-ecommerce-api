@@ -1,4 +1,34 @@
+server:
+  port: 8080
+
 spring:
-  application:
-    name:
-      decosk
+  datasource:
+    url: jdbc:postgresql://localhost:5432/your_database
+    username: your_username
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+
+jwt:
+  secret-key: your_secret_key
+
+spring:
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: your_username
+    password: your_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    reactive:
+      url: redis://localhost:6379
