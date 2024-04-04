@@ -13,5 +13,5 @@ enum class OAuth2Provider(s: String) {
     NAVER("naver"),
     KAKAO("kakao");
 
-    private val registrationId: String? = null
+    val registrationId: String? = null
 }

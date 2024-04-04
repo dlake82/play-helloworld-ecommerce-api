@@ -1,8 +1,8 @@
-package com.example.oauth2.oauth2.service
+package com.saysimple.decosk.security.services
 
 import com.example.oauth2.oauth2.exception.OAuth2AuthenticationProcessingException
-import com.example.oauth2.oauth2.user.OAuth2UserInfo
-import com.example.oauth2.oauth2.user.OAuth2UserInfoFactory
+import com.saysimple.decosk.security.users.OAuth2UserInfo
+import com.saysimple.decosk.security.users.OAuth2UserInfoFactory
 import lombok.RequiredArgsConstructor
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
@@ -43,7 +43,7 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
         )
 
         // OAuth2UserInfo field value validation
-        if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
+        if (!StringUtils.hasText(oAuth2UserInfo.email)) {
             throw OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider")
         }
 

@@ -62,6 +62,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
 //    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("com.google.code.gson:gson:2.8.9")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")

@@ -1,10 +1,6 @@
-package com.example.oauth2.oauth2.user
+package com.saysimple.decosk.security.users
 
 import com.example.oauth2.oauth2.exception.OAuth2AuthenticationProcessingException
-import com.saysimple.decosk.security.users.GoogleOAuth2UserUnlink
-import com.saysimple.decosk.security.users.KakaoOAuth2UserUnlink
-import com.saysimple.decosk.security.users.NaverOAuth2UserUnlink
-import com.saysimple.decosk.security.users.OAuth2Provider
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Component
 
@@ -24,7 +20,7 @@ class OAuth2UserUnlinkManager {
             kakaoOAuth2UserUnlink!!.unlink(accessToken)
         } else {
             throw OAuth2AuthenticationProcessingException(
-                ("Unlink with " + provider.getRegistrationId()).toString() + " is not supported"
+                ("Unlink with " + provider.registrationId) + " is not supported"
             )
         }
     }

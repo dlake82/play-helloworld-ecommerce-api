@@ -1,8 +1,8 @@
-package com.example.oauth2.oauth2.handler
+package com.saysimple.decosk.security.handlers
 
-import com.example.oauth2.oauth2.HttpCookieOAuth2AuthorizationRequestRepository
-import com.example.oauth2.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME
-import com.example.oauth2.oauth2.util.CookieUtils
+import com.saysimple.decosk.security.HttpCookieOAuth2AuthorizationRequestRepository
+import com.saysimple.decosk.security.HttpCookieOAuth2AuthorizationRequestRepository.Companion.REDIRECT_URI_PARAM_COOKIE_NAME
+import com.saysimple.decosk.security.utils.CookieUtils
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -31,7 +31,7 @@ class OAuth2AuthenticationFailureHandler : SimpleUrlAuthenticationFailureHandler
             .queryParam("error", exception.localizedMessage)
             .build().toUriString()
 
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response)
+        httpCookieOAuth2AuthorizationRequestRepository?.removeAuthorizationRequestCookies(request, response)
 
         redirectStrategy.sendRedirect(request, response, targetUrl)
     }

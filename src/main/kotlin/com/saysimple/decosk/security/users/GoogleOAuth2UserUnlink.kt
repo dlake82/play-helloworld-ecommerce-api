@@ -1,6 +1,5 @@
 package com.saysimple.decosk.security.users
 
-import com.example.oauth2.oauth2.user.OAuth2UserUnlink
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
@@ -12,7 +11,7 @@ import org.springframework.web.client.RestTemplate
 class GoogleOAuth2UserUnlink : OAuth2UserUnlink {
     private val restTemplate: RestTemplate? = null
 
-    fun unlink(accessToken: String?) {
+    override fun unlink(accessToken: String?) {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         params.add("token", accessToken)
         restTemplate!!.postForObject(URL, params, String::class.java)
