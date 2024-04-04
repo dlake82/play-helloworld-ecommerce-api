@@ -60,13 +60,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.data:spring-data-rest-hal-explorer")
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+//    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("com.google.code.gson:gson:2.8.9")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
@@ -108,4 +109,3 @@ tasks.generateJava {
     packageName = "com.saysimple.decosk.codegen"
     generateClient = true
 }
-

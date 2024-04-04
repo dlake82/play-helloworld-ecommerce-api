@@ -14,6 +14,11 @@ class UserController {
         return ResponseEntity<User>(user, HttpStatus.OK)
     }
 
+    @GetMapping("home")
+    fun home(): String {
+        return "login"
+    }
+
     @PostMapping
     fun create(): String {
         return "admin"
