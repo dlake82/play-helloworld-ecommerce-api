@@ -1,49 +1,63 @@
+import lombok.RequiredArgsConstructor
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.MediaType
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.password.NoOpPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import java.io.PrintWriter
-import java.nio.charset.StandardCharsets
 
+@RequiredArgsConstructor
+@EnableWebSecurity
 @Configuration
-@EnableMethodSecurity
-class SecurityConfig(private val oAuth2UserService: OAuth2UserService) {
+class WebSecurityConfig {
+
+    @Autowired
+    private lateinit var userDetailsService: UserDetailsService
+
+    @Autowired
+    fun configureGlobal(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
+    }
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.csrf().disable()
-        http.authorizeHttpRequests { config -> config.anyRequest().permitAll() }
-        http.oauth2Login { oauth2Configurer ->
-            oauth2Configurer
-                .loginPage("/login")
-                .successHandler(successHandler())
-                .userInfoEndpoint()
-                .userService(oAuth2UserService)
-        }
+    fun passwordEncoder(): PasswordEncoder {
+        return NoOpPasswordEncoder.getInstance()
+    }
 
+
+    @Bean
+    fun authProvider(): DaoAuthenticationProvider {
+        val authProvider = DaoAuthenticationProvider()
+        authProvider.setUserDetailsService(userDetailsService)
+        authProvider.setPasswordEncoder(passwordEncoder())
+        return authProvider
+    }
+
+    @Bean
+    fun userDetailsService(): UserDetailsService {
+        val manager: InMemoryUserDetailsManager = InMemoryUserDetailsManager()
+        manager.createUser(User.withUsername("user1").password("1234").build())
+        return manager
+    }
+
+
+    @Bean
+    @Throws(Exception::class)
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        http.authorizeHttpRequests { authorizeRequests ->
+            authorizeRequests.requestMatchers("/api1").hasRole("user")
+                .requestMatchers("/api2").hasRole("admin").anyRequest().authenticated()
+        }.formLogin { formLogin ->
+            formLogin.usernameParameter("username").passwordParameter("password").defaultSuccessUrl("/", true)
+        }
         return http.build()
     }
 
-    @Bean
-    fun successHandler(): AuthenticationSuccessHandler {
-        return AuthenticationSuccessHandler { request, response, authentication ->
-            val defaultOAuth2User = authentication.principal as DefaultOAuth2User
-
-            val id = defaultOAuth2User.attributes["id"].toString()
-            val body = """
-                    {"id":"$id"}
-                    """.trimIndent()
-
-            response.contentType = MediaType.APPLICATION_JSON_VALUE
-            response.characterEncoding = StandardCharsets.UTF_8.name()
-
-            val writer = PrintWriter(response.writer)
-            writer.println(body)
-            writer.flush()
-        }
-    }
 }
