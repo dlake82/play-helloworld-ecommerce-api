@@ -1,6 +1,6 @@
 package com.saysimple.decosk.security.users
 
-import com.example.oauth2.oauth2.user.OAuth2UserUnlink
+
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate
 class KakaoOAuth2UserUnlink : OAuth2UserUnlink {
     private val restTemplate: RestTemplate? = null
 
-    fun unlink(accessToken: String?) {
+    override fun unlink(accessToken: String?) {
         val headers = HttpHeaders()
         headers.setBearerAuth(accessToken!!)
         val entity = HttpEntity<Any>("", headers)

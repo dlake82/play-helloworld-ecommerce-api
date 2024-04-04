@@ -3,7 +3,7 @@ package com.saysimple.decosk.security.users
 
 class KakaoOAuth2UserInfo(
     override val accessToken: String,
-    attributes: Map<String, Any?>
+    attributes: Map<String, Any>
 ) : OAuth2UserInfo {
     override val attributes: Map<String, Any>
     override val id: String
@@ -15,8 +15,8 @@ class KakaoOAuth2UserInfo(
     override val profileImageUrl: String?
 
     init {
-        val kakaoAccount = attributes["kakao_account"] as Map<String, Any>
-        val kakaoProfile = kakaoAccount["profile"] as Map<String, Any>
+        val kakaoAccount = attributes["kakao_account"] as MutableMap<String, Any>
+        val kakaoProfile = kakaoAccount["profile"] as MutableMap<String, Any>
         this.attributes = kakaoProfile
 
         this.id = (attributes["id"] as Long?).toString()
@@ -29,7 +29,7 @@ class KakaoOAuth2UserInfo(
         this.profileImageUrl = attributes["profile_image_url"] as String?
 
         this.attributes["id"] = id
-        this.attributes["email"] = this.email
+        this.attributes["email"] = this.email ?: ""
     }
 
     override val provider: OAuth2Provider

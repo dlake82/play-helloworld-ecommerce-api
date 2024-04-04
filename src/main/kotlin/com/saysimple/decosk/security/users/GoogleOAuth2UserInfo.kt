@@ -1,7 +1,7 @@
 package com.saysimple.decosk.security.users
 
 
-class GoogleOAuth2UserInfo(override val accessToken: String, override val attributes: Map<String?, Any>) :
+class GoogleOAuth2UserInfo(override val accessToken: String, override val attributes: Map<String, Any>) :
     OAuth2UserInfo {
     override val id: String? = attributes["sub"] as String?
     override val email: String? = attributes["email"] as String?

@@ -20,7 +20,7 @@ class OAuth2UserPrincipal(private val userInfo: OAuth2UserInfo) : OAuth2User, Us
 
     override fun isEnabled(): Boolean = true
 
-    override fun getAttributes(): Map<String?, Any?>? = userInfo.attributes
+    override fun getAttributes(): Map<String, Any> = userInfo.attributes
 
     override fun getAuthorities(): Collection<GrantedAuthority> = emptyList()
 

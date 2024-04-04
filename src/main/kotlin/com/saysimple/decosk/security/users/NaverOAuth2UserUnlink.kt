@@ -1,6 +1,5 @@
 package com.saysimple.decosk.security.users
 
-import com.example.oauth2.oauth2.user.OAuth2UserUnlink
 import com.fasterxml.jackson.annotation.JsonProperty
 import lombok.Getter
 import lombok.RequiredArgsConstructor
@@ -19,7 +18,7 @@ class NaverOAuth2UserUnlink : OAuth2UserUnlink {
     @Value("\${spring.security.oauth2.client.registration.naver.client-secret}")
     private val clientSecret: String? = null
 
-    fun unlink(accessToken: String) {
+    override fun unlink(accessToken: String?) {
         val url = URL +
                 "?service_provider=NAVER" +
                 "&grant_type=delete" +
@@ -35,7 +34,7 @@ class NaverOAuth2UserUnlink : OAuth2UserUnlink {
             UnlinkResponse::class.java
         )
 
-        if (response != null && !"success".equals(response.getResult(), ignoreCase = true)) {
+        if (!"success".equals(response?.result, ignoreCase = true)) {
             throw RuntimeException("Failed to Naver Unlink")
         }
     }
@@ -44,11 +43,12 @@ class NaverOAuth2UserUnlink : OAuth2UserUnlink {
     @RequiredArgsConstructor
     class UnlinkResponse {
         @JsonProperty("access_token")
-        private val accessToken: String? = null
-        private val result: String? = null
+        val accessToken: String? = null
+        val result: String? = null
     }
 
     companion object {
         private const val URL = "https://nid.naver.com/oauth2.0/token"
     }
+
 }
