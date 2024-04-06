@@ -1,27 +1,27 @@
-package com.saysimple.decosk.security.oauth2.user;
+package com.saysimple.decosk.security.oauth2.user
 
-import com.saysimple.decosk.security.oauth2.exception.OAuth2AuthenticationProcessingException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.saysimple.decosk.security.oauth2.exception.OAuth2AuthenticationProcessingException
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Component
 
 @RequiredArgsConstructor
 @Component
-public class OAuth2UserUnlinkManager {
+class OAuth2UserUnlinkManager {
+    private val googleOAuth2UserUnlink: GoogleOAuth2UserUnlink? = null
+    private val kakaoOAuth2UserUnlink: KakaoOAuth2UserUnlink? = null
+    private val naverOAuth2UserUnlink: NaverOAuth2UserUnlink? = null
 
-    private final GoogleOAuth2UserUnlink googleOAuth2UserUnlink;
-    private final KakaoOAuth2UserUnlink kakaoOAuth2UserUnlink;
-    private final NaverOAuth2UserUnlink naverOAuth2UserUnlink;
-
-    public void unlink(OAuth2Provider provider, String accessToken) {
-        if (OAuth2Provider.GOOGLE.equals(provider)) {
-            googleOAuth2UserUnlink.unlink(accessToken);
-        } else if (OAuth2Provider.NAVER.equals(provider)) {
-            naverOAuth2UserUnlink.unlink(accessToken);
-        } else if (OAuth2Provider.KAKAO.equals(provider)) {
-            kakaoOAuth2UserUnlink.unlink(accessToken);
+    fun unlink(provider: OAuth2Provider, accessToken: String) {
+        if (OAuth2Provider.GOOGLE == provider) {
+            googleOAuth2UserUnlink!!.unlink(accessToken)
+        } else if (OAuth2Provider.NAVER == provider) {
+            naverOAuth2UserUnlink!!.unlink(accessToken)
+        } else if (OAuth2Provider.KAKAO == provider) {
+            kakaoOAuth2UserUnlink!!.unlink(accessToken)
         } else {
-            throw new OAuth2AuthenticationProcessingException(
-                    "Unlink with " + provider.getRegistrationId() + " is not supported");
+            throw OAuth2AuthenticationProcessingException(
+                ("Unlink with " + provider.registrationId) + " is not supported"
+            )
         }
     }
 }

@@ -1,117 +1,125 @@
-package com.saysimple.decosk.security.oauth2.handler;
+package com.saysimple.decosk.security.oauth2.handler
 
-import com.saysimple.decosk.security.jwt.TokenProvider;
-import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.saysimple.decosk.security.oauth2.service.OAuth2UserPrincipal;
-import com.saysimple.decosk.security.oauth2.user.OAuth2Provider;
-import com.saysimple.decosk.security.oauth2.user.OAuth2UserUnlinkManager;
-import com.saysimple.decosk.security.oauth2.utils.CookieUtils;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository
+import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.MODE_PARAM_COOKIE_NAME
+import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME
+import com.saysimple.decosk.security.oauth2.service.OAuth2UserPrincipal
+import com.saysimple.decosk.security.oauth2.user.OAuth2Provider
+import com.saysimple.decosk.security.oauth2.user.OAuth2UserUnlinkManager
+import com.saysimple.decosk.security.oauth2.utils.CookieUtils
+import io.github.oshai.kotlinlogging.KotlinLogging
+import lombok.RequiredArgsConstructor
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
+import org.springframework.web.util.UriComponentsBuilder
+import java.io.IOException
 
-@Slf4j
+val log = KotlinLogging.logger {}
+
+@lombok.extern.slf4j.Slf4j
 @RequiredArgsConstructor
-@Component
-public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+@org.springframework.stereotype.Component
+class OAuth2AuthenticationSuccessHandler(
+    private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository,
+    private val oAuth2UserUnlinkManager: OAuth2UserUnlinkManager
+) : SimpleUrlAuthenticationSuccessHandler() {
 
-    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-    private final OAuth2UserUnlinkManager oAuth2UserUnlinkManager;
-    private final TokenProvider tokenProvider;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+    @kotlin.Throws(IOException::class)
+    override fun onAuthenticationSuccess(
+        request: jakarta.servlet.http.HttpServletRequest, response: jakarta.servlet.http.HttpServletResponse,
+        authentication: org.springframework.security.core.Authentication
+    ) {
 
-        String targetUrl;
+        val targetUrl: String = determineTargetUrl(request, response, authentication)
 
-        targetUrl = determineTargetUrl(request, response, authentication);
-
-        if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
-            return;
+        if (response.isCommitted) {
+            logger.debug("Response has already been committed. Unable to redirect to $targetUrl")
+            return
         }
 
-        clearAuthenticationAttributes(request, response);
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        clearAuthenticationAttributes(request, response)
+        redirectStrategy.sendRedirect(request, response, targetUrl)
     }
 
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
+    override fun determineTargetUrl(
+        request: jakarta.servlet.http.HttpServletRequest, response: jakarta.servlet.http.HttpServletResponse,
+        authentication: org.springframework.security.core.Authentication
+    ): String {
 
-        Optional<String> redirectUri = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue);
+        val redirectUri: java.util.Optional<String> =
+            CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+                .map { obj: jakarta.servlet.http.Cookie -> obj.value }
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
+        val targetUrl = redirectUri.orElse(defaultTargetUrl)
 
-        String mode = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.MODE_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse("");
+        val mode: String = CookieUtils.getCookie(request, MODE_PARAM_COOKIE_NAME)
+            .map { obj: jakarta.servlet.http.Cookie -> obj.value }
+            .orElse("")
 
-        OAuth2UserPrincipal principal = getOAuth2UserPrincipal(authentication);
+        val principal: OAuth2UserPrincipal? = getOAuth2UserPrincipal(authentication)
 
         if (principal == null) {
             return UriComponentsBuilder.fromUriString(targetUrl)
-                    .queryParam("error", "Login failed")
-                    .build().toUriString();
+                .queryParam("error", "Login failed")
+                .build().toUriString()
         }
 
-        if ("login".equalsIgnoreCase(mode)) {
+        if ("login".equals(mode, ignoreCase = true)) {
             // TODO: DB 저장
             // TODO: 액세스 토큰, 리프레시 토큰 발급
             // TODO: 리프레시 토큰 DB 저장
-            log.info("email={}, name={}, nickname={}, accessToken={}", principal.getUserInfo().getEmail(),
-                    principal.getUserInfo().getName(),
-                    principal.getUserInfo().getNickname(),
-                    principal.getUserInfo().getAccessToken()
-            );
+            log.info {
+                "${"email={}, name={}, nickname={}, accessToken={}"} ${
+                    arrayOf<Any?>(
+                        principal.getUserInfo().email,
+                        principal.getUserInfo().name,
+                        principal.getUserInfo().nickname,
+                        principal.getUserInfo().accessToken
+                    )
+                }"
+            }
 
-            String accessToken = tokenProvider.createToken(authentication);
-            String refreshToken = "test_refresh_token";
+            val accessToken: String = "test_access_token"
+            val refreshToken: String = "test_refresh_token"
 
             return UriComponentsBuilder.fromUriString(targetUrl)
-                    .queryParam("access_token", accessToken)
-                    .queryParam("refresh_token", refreshToken)
-                    .build().toUriString();
+                .queryParam("access_token", accessToken)
+                .queryParam("refresh_token", refreshToken)
+                .build().toUriString()
 
-        } else if ("unlink".equalsIgnoreCase(mode)) {
+        } else if ("unlink".equals(mode, ignoreCase = true)) {
 
-            String accessToken = principal.getUserInfo().getAccessToken();
-            OAuth2Provider provider = principal.getUserInfo().getProvider();
+            val accessToken: String = principal.getUserInfo().accessToken
+            val provider: OAuth2Provider = principal.getUserInfo().provider
 
             // TODO: DB 삭제
             // TODO: 리프레시 토큰 삭제
-            oAuth2UserUnlinkManager.unlink(provider, accessToken);
+            oAuth2UserUnlinkManager.unlink(provider, accessToken)
 
             return UriComponentsBuilder.fromUriString(targetUrl)
-                    .build().toUriString();
+                .build().toUriString()
         }
 
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("error", "Login failed")
-                .build().toUriString();
+            .queryParam("error", "Login failed")
+            .build().toUriString()
     }
 
-    private OAuth2UserPrincipal getOAuth2UserPrincipal(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
+    private fun getOAuth2UserPrincipal(authentication: org.springframework.security.core.Authentication): OAuth2UserPrincipal? {
+        val principal: Any = authentication.principal
 
-        if (principal instanceof OAuth2UserPrincipal) {
-            return (OAuth2UserPrincipal) principal;
+        if (principal is OAuth2UserPrincipal) {
+            return principal
         }
-        return null;
+        return null
     }
 
-    protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
-        super.clearAuthenticationAttributes(request);
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+    protected fun clearAuthenticationAttributes(
+        request: jakarta.servlet.http.HttpServletRequest?,
+        response: jakarta.servlet.http.HttpServletResponse?
+    ) {
+        super.clearAuthenticationAttributes(request)
+        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response)
     }
 }

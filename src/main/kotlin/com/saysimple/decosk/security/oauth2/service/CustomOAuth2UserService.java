@@ -1,7 +1,5 @@
 package com.saysimple.decosk.security.oauth2.service;
 
-import com.saysimple.decosk.security.oauth2.exception.OAuth2AuthenticationProcessingException;
-import com.saysimple.decosk.security.oauth2.user.OAuth2UserInfo;
 import com.saysimple.decosk.security.oauth2.user.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

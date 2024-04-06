@@ -1,28 +1,25 @@
-package com.saysimple.decosk.security.oauth2.user;
+package com.saysimple.decosk.security.oauth2.user
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.annotation.JsonProperty
+import lombok.Getter
+import lombok.RequiredArgsConstructor
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import org.springframework.web.client.RestTemplate
 
 @RequiredArgsConstructor
 @Component
-public class NaverOAuth2UserUnlink implements OAuth2UserUnlink {
+class NaverOAuth2UserUnlink : OAuth2UserUnlink {
+    private val restTemplate: RestTemplate? = null
 
-    private static final String URL = "https://nid.naver.com/oauth2.0/token";
+    @Value("\${spring.security.oauth2.client.registration.naver.client-id}")
+    private val clientId: String? = null
 
-    private final RestTemplate restTemplate;
-    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
-    private String clientId;
-    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
-    private String clientSecret;
+    @Value("\${spring.security.oauth2.client.registration.naver.client-secret}")
+    private val clientSecret: String? = null
 
-    @Override
-    public void unlink(String accessToken) {
-
-        String url = URL +
+    override fun unlink(accessToken: String) {
+        val url = URL +
                 "?service_provider=NAVER" +
                 "&grant_type=delete" +
                 "&client_id=" +
@@ -30,20 +27,28 @@ public class NaverOAuth2UserUnlink implements OAuth2UserUnlink {
                 "&client_secret=" +
                 clientSecret +
                 "&access_token=" +
-                accessToken;
+                accessToken
 
-        UnlinkResponse response = restTemplate.getForObject(url, UnlinkResponse.class);
+        val response = restTemplate!!.getForObject(
+            url,
+            UnlinkResponse::class.java
+        )
 
-        if (response != null && !"success".equalsIgnoreCase(response.getResult())) {
-            throw new RuntimeException("Failed to Naver Unlink");
+        if (!"success".equals(response?.result, ignoreCase = true)) {
+            throw RuntimeException("Failed to Naver Unlink")
         }
     }
 
     @Getter
     @RequiredArgsConstructor
-    public static class UnlinkResponse {
+    class UnlinkResponse {
         @JsonProperty("access_token")
-        private final String accessToken;
-        private final String result;
+        val accessToken: String? = null
+        val result: String? = null
     }
+
+    companion object {
+        private const val URL = "https://nid.naver.com/oauth2.0/token"
+    }
+
 }

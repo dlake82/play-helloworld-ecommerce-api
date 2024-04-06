@@ -1,80 +1,19 @@
-package com.saysimple.decosk.security.oauth2.user;
+package com.saysimple.decosk.security.oauth2.user
 
-import java.util.Map;
 
-public class NaverOAuth2UserInfo implements OAuth2UserInfo {
+class NaverOAuth2UserInfo(override val accessToken: String, attributes: Map<String, Any>) :
+    OAuth2UserInfo {
+    // attributes 맵의 response 키의 값에 실제 attributes 맵이 할당되어 있음
+    override val attributes: Map<String, Any> = attributes["response"] as Map<String, Any>
+    override val id: String = this.attributes["id"] as String
+    override val email: String = this.attributes["email"] as String
+    override val name: String? = this.attributes["name"] as String?
+    override val firstName: String? = null
+    override val lastName: String? = null
+    override val nickname: String? = attributes["nickname"] as String?
 
-    private final Map<String, Object> attributes;
-    private final String accessToken;
-    private final String id;
-    private final String email;
-    private final String name;
-    private final String firstName;
-    private final String lastName;
-    private final String nickName;
-    private final String profileImageUrl;
+    override val profileImageUrl: String? = attributes["profile_image"] as String?
 
-    public NaverOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
-        this.accessToken = accessToken;
-        // attributes 맵의 response 키의 값에 실제 attributes 맵이 할당되어 있음
-        this.attributes = (Map<String, Object>) attributes.get("response");
-        this.id = (String) this.attributes.get("id");
-        this.email = (String) this.attributes.get("email");
-        this.name = (String) this.attributes.get("name");
-        this.firstName = null;
-        this.lastName = null;
-        this.nickName = (String) attributes.get("nickname");
-        ;
-        this.profileImageUrl = (String) attributes.get("profile_image");
-    }
-
-    @Override
-    public OAuth2Provider getProvider() {
-        return OAuth2Provider.NAVER;
-    }
-
-    @Override
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getFirstName() {
-        return firstName;
-    }
-
-    @Override
-    public String getLastName() {
-        return lastName;
-    }
-
-    @Override
-    public String getNickname() {
-        return nickName;
-    }
-
-    @Override
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
+    override val provider: OAuth2Provider
+        get() = OAuth2Provider.NAVER
 }

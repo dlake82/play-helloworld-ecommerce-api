@@ -1,68 +1,30 @@
-package com.saysimple.decosk.security.oauth2.service;
+package com.saysimple.decosk.security.oauth2.service
 
-import com.saysimple.decosk.security.oauth2.user.OAuth2UserInfo;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import com.saysimple.decosk.security.oauth2.user.OAuth2UserInfo
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.oauth2.core.user.OAuth2User
 
-public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
+class OAuth2UserPrincipal(private val userInfo: OAuth2UserInfo) : OAuth2User, UserDetails {
 
-    private final OAuth2UserInfo userInfo;
+    override fun getPassword(): String? = null
 
-    public OAuth2UserPrincipal(OAuth2UserInfo userInfo) {
-        this.userInfo = userInfo;
-    }
+    override fun getUsername(): String = userInfo.email
 
-    @Override
-    public String getPassword() {
-        return null;
-    }
+    override fun isAccountNonExpired(): Boolean = true
 
-    @Override
-    public String getUsername() {
-        return userInfo.getEmail();
-    }
+    override fun isAccountNonLocked(): Boolean = true
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    override fun isCredentialsNonExpired(): Boolean = true
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    override fun isEnabled(): Boolean = true
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    override fun getAttributes(): Map<String, Any> = userInfo.attributes
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    override fun getAuthorities(): Collection<GrantedAuthority> = emptyList()
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        return userInfo.getAttributes();
-    }
+    override fun getName(): String = userInfo.email
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getName() {
-        return userInfo.getEmail();
-    }
-
-    public OAuth2UserInfo getUserInfo() {
-        return userInfo;
-    }
+    fun getUserInfo(): OAuth2UserInfo = userInfo
 }

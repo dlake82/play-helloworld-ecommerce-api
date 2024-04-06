@@ -1,16 +1,9 @@
-package com.saysimple.decosk.security.oauth2.user;
+package com.saysimple.decosk.security.oauth2.user
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
-public enum OAuth2Provider {
+enum class OAuth2Provider(val registrationId: String) {
     GOOGLE("google"),
     FACEBOOK("facebook"),
     GITHUB("github"),
     NAVER("naver"),
-    KAKAO("kakao");
-
-    private final String registrationId;
+    KAKAO("kakao")
 }

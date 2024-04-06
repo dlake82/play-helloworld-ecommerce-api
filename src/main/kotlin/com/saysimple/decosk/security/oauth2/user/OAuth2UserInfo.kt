@@ -1,26 +1,23 @@
-package com.saysimple.decosk.security.oauth2.user;
+package com.saysimple.decosk.security.oauth2.user
 
-import java.util.Map;
+interface OAuth2UserInfo {
+    val provider: OAuth2Provider
 
-public interface OAuth2UserInfo {
+    val accessToken: String
 
-    OAuth2Provider getProvider();
+    val attributes: Map<String, Any>
 
-    String getAccessToken();
+    val id: String
 
-    Map<String, Object> getAttributes();
+    val email: String
 
-    String getId();
+    val name: String?
 
-    String getEmail();
+    val firstName: String?
 
-    String getName();
+    val lastName: String?
 
-    String getFirstName();
+    val nickname: String?
 
-    String getLastName();
-
-    String getNickname();
-
-    String getProfileImageUrl();
+    val profileImageUrl: String?
 }

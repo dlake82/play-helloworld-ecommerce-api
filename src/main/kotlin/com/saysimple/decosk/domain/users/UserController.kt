@@ -1,19 +1,21 @@
-package com.saysimple.decosk.domain.users;
+package com.saysimple.decosk.domain.users
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
-public class UserController {
+@RequestMapping("/api")
+class UserController {
 
     @GetMapping("/users")
-    public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails.getUsername();
+    fun getUserInfo(@AuthenticationPrincipal userDetails: UserDetails?): ResponseEntity<String> {
+        return userDetails?.let {
+            ResponseEntity.ok(it.username)
+        } ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }
 }

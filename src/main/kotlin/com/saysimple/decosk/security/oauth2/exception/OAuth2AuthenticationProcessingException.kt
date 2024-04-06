@@ -1,9 +1,5 @@
-package com.saysimple.decosk.security.oauth2.exception;
+package com.saysimple.decosk.security.oauth2.exception
 
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.AuthenticationException
 
-public class OAuth2AuthenticationProcessingException extends AuthenticationException {
-    public OAuth2AuthenticationProcessingException(String msg) {
-        super(msg);
-    }
-}
+class OAuth2AuthenticationProcessingException(msg: String?) : AuthenticationException(msg)

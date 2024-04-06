@@ -3,10 +3,7 @@ package com.saysimple.decosk.domain.test
 import com.saysimple.decosk.domain.test.models.Post
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @CrossOrigin(origins = ["*"])
 @RestController
@@ -14,7 +11,25 @@ import org.springframework.web.bind.annotation.RestController
 class TestController {
 
     @GetMapping
-    fun index(): ResponseEntity<Post> {
+    fun get(): ResponseEntity<Post> {
+        val test = Post(1)
+        return ResponseEntity<Post>(test, HttpStatus.OK)
+    }
+
+    @PostMapping
+    fun create(): ResponseEntity<Post> {
+        val test = Post(1)
+        return ResponseEntity<Post>(test, HttpStatus.OK)
+    }
+
+    @PutMapping
+    fun update(id: Int): ResponseEntity<Post> {
+        val test = Post(id)
+        return ResponseEntity<Post>(test, HttpStatus.OK)
+    }
+
+    @DeleteMapping
+    fun delete(): ResponseEntity<Post> {
         val test = Post(1)
         return ResponseEntity<Post>(test, HttpStatus.OK)
     }
