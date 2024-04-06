@@ -1,4 +1,4 @@
-package com.example.oauth2.user.controller;
+package com.saysimple.decosk.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,6 +1,6 @@
 package com.saysimple.decosk.oauth2.user;
 
-import com.example.oauth2.oauth2.exception.OAuth2AuthenticationProcessingException;
+import com.saysimple.decosk.oauth2.exception.OAuth2AuthenticationProcessingException;
 
 import java.util.Map;
 

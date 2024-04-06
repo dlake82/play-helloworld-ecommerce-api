@@ -1,7 +1,7 @@
-package com.example.oauth2.oauth2.handler;
+package com.saysimple.decosk.oauth2.handler;
 
-import com.example.oauth2.oauth2.util.CookieUtils;
-import com.example.oauth2.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.saysimple.decosk.oauth2.util.CookieUtils;
+import com.saysimple.decosk.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-import static com.example.oauth2.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.saysimple.decosk.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @RequiredArgsConstructor
 @Component

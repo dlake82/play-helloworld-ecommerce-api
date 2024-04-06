@@ -1,6 +1,6 @@
 package com.saysimple.decosk.oauth2;
 
-import com.example.oauth2.oauth2.util.CookieUtils;
+import com.saysimple.decosk.oauth2.util.CookieUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

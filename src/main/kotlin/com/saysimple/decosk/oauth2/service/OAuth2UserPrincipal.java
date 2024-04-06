@@ -1,6 +1,6 @@
-package com.example.oauth2.oauth2.service;
+package com.saysimple.decosk.oauth2.service;
 
-import com.example.oauth2.oauth2.user.OAuth2UserInfo;
+import com.saysimple.decosk.oauth2.user.OAuth2UserInfo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;

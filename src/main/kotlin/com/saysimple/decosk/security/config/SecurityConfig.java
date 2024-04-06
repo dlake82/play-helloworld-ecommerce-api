@@ -1,10 +1,10 @@
-package com.saysimple.decosk.config;
+package com.saysimple.decosk.security.config;
 
 import com.saysimple.decosk.jwt.JwtAuthorizationFilter;
-import com.saysimple.decosk.oauth2.service.CustomOAuth2UserService;
 import com.saysimple.decosk.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.saysimple.decosk.oauth2.handler.OAuth2AuthenticationFailureHandler;
 import com.saysimple.decosk.oauth2.handler.OAuth2AuthenticationSuccessHandler;
+import com.saysimple.decosk.oauth2.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
