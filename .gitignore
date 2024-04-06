@@ -1,4 +1,4 @@
-# HELP.md
+HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -29,22 +29,9 @@ out/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist//.nb-gradle/
-
+/dist/
 /nbdist/
+/.nb-gradle/
 
 ### VS Code ###
 .vscode/
-
-### Kotlin ###
-.kotlin
-
-### data ###
-postgres/data/*
-
-### dotenv ###
-.env
-.env*
-
-### application ###
-application.*
