@@ -11,7 +11,7 @@ class OAuth2UserUnlinkManager {
     private val kakaoOAuth2UserUnlink: KakaoOAuth2UserUnlink? = null
     private val naverOAuth2UserUnlink: NaverOAuth2UserUnlink? = null
 
-    fun unlink(provider: OAuth2Provider, accessToken: String) {
+    fun unlink(provider: OAuth2Provider?, accessToken: String?) {
         if (OAuth2Provider.GOOGLE == provider) {
             googleOAuth2UserUnlink!!.unlink(accessToken)
         } else if (OAuth2Provider.NAVER == provider) {
@@ -20,7 +20,7 @@ class OAuth2UserUnlinkManager {
             kakaoOAuth2UserUnlink!!.unlink(accessToken)
         } else {
             throw OAuth2AuthenticationProcessingException(
-                ("Unlink with " + provider.registrationId) + " is not supported"
+                ("Unlink with " + provider?.registrationId) + " is not supported"
             )
         }
     }

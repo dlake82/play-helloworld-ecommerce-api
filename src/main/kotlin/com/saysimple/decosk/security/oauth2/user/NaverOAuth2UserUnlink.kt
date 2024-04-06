@@ -18,7 +18,7 @@ class NaverOAuth2UserUnlink : OAuth2UserUnlink {
     @Value("\${spring.security.oauth2.client.registration.naver.client-secret}")
     private val clientSecret: String? = null
 
-    override fun unlink(accessToken: String) {
+    override fun unlink(accessToken: String?) {
         val url = URL +
                 "?service_provider=NAVER" +
                 "&grant_type=delete" +

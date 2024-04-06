@@ -1,15 +1,15 @@
 package com.saysimple.decosk.security.oauth2.user
 
 interface OAuth2UserInfo {
-    val provider: OAuth2Provider
+    val provider: OAuth2Provider?
 
-    val accessToken: String
+    val accessToken: String?
 
-    val attributes: Map<String, Any>
+    val attributes: Map<String?, Any?>?
 
-    val id: String
+    val id: String?
 
-    val email: String
+    val email: String?
 
     val name: String?
 

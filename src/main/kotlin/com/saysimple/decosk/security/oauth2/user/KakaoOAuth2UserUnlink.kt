@@ -13,8 +13,13 @@ import org.springframework.web.client.RestTemplate
 class KakaoOAuth2UserUnlink : OAuth2UserUnlink {
     private val restTemplate: RestTemplate? = null
 
-    override fun unlink(accessToken: String) {
+    override fun unlink(accessToken: String?) {
         val headers = HttpHeaders()
+        if (accessToken == null) {
+            // TODO: 적절한 익셉션 만들기
+            throw RuntimeException("Failed to Kakao Unlink")
+        }
+
         headers.setBearerAuth(accessToken)
         val entity = HttpEntity<Any>("", headers)
 

@@ -10,7 +10,7 @@ class OAuth2UserPrincipal(private val userInfo: OAuth2UserInfo) : OAuth2User, Us
 
     override fun getPassword(): String? = null
 
-    override fun getUsername(): String = userInfo.email
+    override fun getUsername(): String? = userInfo.email
 
     override fun isAccountNonExpired(): Boolean = true
 
@@ -20,11 +20,11 @@ class OAuth2UserPrincipal(private val userInfo: OAuth2UserInfo) : OAuth2User, Us
 
     override fun isEnabled(): Boolean = true
 
-    override fun getAttributes(): Map<String, Any> = userInfo.attributes
+    override fun getAttributes(): Map<String?, Any?>? = userInfo.attributes
 
     override fun getAuthorities(): Collection<GrantedAuthority> = emptyList()
 
-    override fun getName(): String = userInfo.email
+    override fun getName(): String? = userInfo.email
 
     fun getUserInfo(): OAuth2UserInfo = userInfo
 }

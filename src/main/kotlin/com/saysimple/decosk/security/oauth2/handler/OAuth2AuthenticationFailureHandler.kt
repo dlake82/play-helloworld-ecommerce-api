@@ -1,9 +1,8 @@
 package com.saysimple.decosk.security.oauth2.handler
 
 import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository
-import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME
+import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.Companion.REDIRECT_URI_PARAM_COOKIE_NAME
 import com.saysimple.decosk.security.oauth2.utils.CookieUtils
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
@@ -25,9 +24,7 @@ class OAuth2AuthenticationFailureHandler(
         request: HttpServletRequest, response: HttpServletResponse,
         exception: AuthenticationException
     ) {
-        var targetUrl: String = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
-            .map { obj: Cookie -> obj.value }
-            .orElse(("/"))
+        var targetUrl: String = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)?.value ?: "/"
 
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
             .queryParam("error", exception.localizedMessage)
