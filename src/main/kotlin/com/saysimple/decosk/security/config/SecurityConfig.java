@@ -1,10 +1,10 @@
 package com.saysimple.decosk.security.config;
 
-import com.saysimple.decosk.jwt.JwtAuthorizationFilter;
-import com.saysimple.decosk.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.saysimple.decosk.oauth2.handler.OAuth2AuthenticationFailureHandler;
-import com.saysimple.decosk.oauth2.handler.OAuth2AuthenticationSuccessHandler;
-import com.saysimple.decosk.oauth2.service.CustomOAuth2UserService;
+
+import com.saysimple.decosk.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.saysimple.decosk.security.oauth2.handler.OAuth2AuthenticationFailureHandler;
+import com.saysimple.decosk.security.oauth2.handler.OAuth2AuthenticationSuccessHandler;
+import com.saysimple.decosk.security.oauth2.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
@@ -29,7 +28,6 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,7 +42,8 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(antMatcher("/api/hello/**")).permitAll()
+                        .requestMatchers(antMatcher("/api/admin/**")).hasRole("ADMIN")
+                        .requestMatchers(antMatcher("/api/user/**")).hasRole("USER")
                         .requestMatchers(antMatcher("/h2-console/**")).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -55,8 +54,6 @@ public class SecurityConfig {
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
-
-        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
