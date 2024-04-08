@@ -16,9 +16,13 @@ spring:
             postLogger: true
       routes:
         - id: users
-          uri: lb://users
+          uri: lb://USERS
           predicates:
             - Path=/users/**
+        - id: catalogs
+          uri: lb://CATALOGS
+          predicates:
+            - Path=/catalogs/**
 
 server:
   port: 8000

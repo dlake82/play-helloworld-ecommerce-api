@@ -32,9 +32,9 @@ public class UserServiceImpl implements UserService {
         if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
             throw new IllegalArgumentException("Email cannot be null or empty");
         }
+        ModelMapper mapper = new ModelMapper();
 
         userDto.setUserId(UUID.randomUUID().toString());
-        ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies
                 .STRICT);
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
@@ -42,9 +42,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userEntity);
 
-        UserDto returnUserDto = mapper.map(userEntity, UserDto.class);
-
-        return returnUserDto;
+        return mapper.map(userEntity, UserDto.class);
     }
 
     @Override
