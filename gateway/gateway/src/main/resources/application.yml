@@ -1,0 +1,31 @@
+spring:
+  config:
+    activate:
+      on-profile: default
+
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: users
+          uri: lb://users
+          predicates:
+            - Path=/users/**
+
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
