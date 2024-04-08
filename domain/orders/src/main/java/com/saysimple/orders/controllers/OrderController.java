@@ -5,6 +5,8 @@ import com.saysimple.orders.jpa.OrderEntity;
 import com.saysimple.orders.services.OrderService;
 import com.saysimple.orders.vo.RequestOrder;
 import com.saysimple.orders.vo.ResponseOrder;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -47,19 +50,46 @@ public class OrderController {
                 env.getProperty("server.port"));
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseOrder> create(@RequestBody RequestOrder order) {
+    @PostMapping("/{userId}")
+    public ResponseEntity<ResponseOrder> create(@PathVariable("userId") String userId, @RequestBody RequestOrder order) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         OrderDto orderDto = mapper.map(order, OrderDto.class);
-        orderService.create(orderDto);
+        orderDto.setUserId(userId);
+        OrderDto createdOrderDto = orderService.create(orderDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(orderDto, ResponseOrder.class));
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(createdOrderDto, ResponseOrder.class));
     }
 
-    @GetMapping()
-    public ResponseEntity<List<ResponseOrder>> list(@PathVariable String userId) {
+    @GetMapping
+    public ResponseEntity<List<ResponseOrder>> list() {
+        Iterable<OrderEntity> orders = orderService.list();
+        ModelMapper mapper = new ModelMapper();
+
+        List<ResponseOrder> result = new ArrayList<>();
+        orders.forEach(v -> {
+            result.add(mapper.map(v, ResponseOrder.class));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ResponseOrder> get(@PathVariable("orderId") String orderId) throws HttpException {
+        log.info("OrderController get : " + orderId);
+        OrderDto order = orderService.get(orderId);
+        if (order == null) {
+            throw new HttpException("Order not found");
+        }
+
+        ModelMapper mapper = new ModelMapper();
+
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(order, ResponseOrder.class));
+    }
+
+    @GetMapping("/{userId}/users")
+    public ResponseEntity<List<ResponseOrder>> list(@PathVariable("userId") String userId) {
         Iterable<OrderEntity> orders = orderService.listByUserId(userId);
 
         List<ResponseOrder> result = new ArrayList<>();

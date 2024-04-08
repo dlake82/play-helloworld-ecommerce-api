@@ -10,6 +10,5 @@ public class RequestOrder {
     private String qty;
     private Integer unitPrice;
     private Integer totalPrice;
-    private String userId;
     private String orderId;
 }

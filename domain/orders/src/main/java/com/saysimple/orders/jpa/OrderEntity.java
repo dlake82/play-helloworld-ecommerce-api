@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 public class OrderEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class OrderEntity implements Serializable {
     @Column(nullable = false, length = 120, unique = true)
     private String productId;
     @Column(nullable = false)
-    private String qty;
+    private Integer qty;
     @Column(nullable = false)
     private Integer unitPrice;
     @Column(nullable = false)
