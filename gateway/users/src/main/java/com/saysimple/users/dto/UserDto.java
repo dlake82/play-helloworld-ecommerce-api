@@ -1,9 +1,6 @@
 package com.saysimple.users.dto;
 
-import com.saysimple.users.vo.ResponseOrder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class UserDto {
@@ -14,6 +11,4 @@ public class UserDto {
     private String createdAt;
 
     private String encryptedPwd;
-
-    private List<ResponseOrder> orders;
 }
