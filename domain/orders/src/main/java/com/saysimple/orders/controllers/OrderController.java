@@ -59,7 +59,7 @@ public class OrderController {
         orderDto.setUserId(userId);
         OrderDto createdOrderDto = orderService.create(orderDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(createdOrderDto, ResponseOrder.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(createdOrderDto, ResponseOrder.class));
     }
 
     @GetMapping
