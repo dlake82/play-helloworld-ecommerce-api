@@ -5,7 +5,6 @@ import com.saysimple.users.jpa.UserEntity;
 import com.saysimple.users.services.UserService;
 import com.saysimple.users.vo.RequestUser;
 import com.saysimple.users.vo.ResponseUser;
-import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/")
 public class UserController {
 
     private final Environment env;
@@ -49,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseUser>> list(){
+    public ResponseEntity<List<ResponseUser>> list() {
         Iterable<UserEntity> users = userService.getUserByAll();
 
         ModelMapper mapper = new ModelMapper();
@@ -62,7 +61,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ResponseUser> get(@PathVariable("userId") String userId){
+    public ResponseEntity<ResponseUser> get(@PathVariable("userId") String userId) {
         ResponseUser user = userService.getUserByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(user);

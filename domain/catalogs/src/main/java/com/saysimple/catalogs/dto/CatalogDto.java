@@ -2,13 +2,15 @@ package com.saysimple.catalogs.dto;
 
 import lombok.Data;
 
-@Data
-public class CatalogDto { // implements Serializable {
-    private String productId;
-    private Integer qty;
-    private Integer unitPrice;
-    private Integer totalPrice;
+import java.io.Serializable;
+import java.util.Date;
 
-    private String orderId;
-    private String userId;
+@Data
+public class CatalogDto implements Serializable {
+    private Long id;
+    private String productId;
+    private String productName;
+    private Integer unitPrice;
+    private Integer stock;
+    private Date createdAt;
 }

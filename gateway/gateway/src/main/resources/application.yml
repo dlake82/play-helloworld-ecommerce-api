@@ -15,14 +15,42 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        #        - id: users
+        #          uri: lb://USERS
+        #          predicates:
+        #            - Path=/users/**
+        - id: users
+          uri: lb://USERS
+          predicates:
+            - Path=/users/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: users
+          uri: lb://USERS
+          predicates:
+            - Path=/users/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
         - id: users
           uri: lb://USERS
           predicates:
             - Path=/users/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
         - id: catalogs
           uri: lb://CATALOGS
           predicates:
             - Path=/catalogs/**
+        - id: orders
+          uri: lb://ORDERS
+          predicates:
+            - Path=/orders/**
 
 server:
   port: 8000

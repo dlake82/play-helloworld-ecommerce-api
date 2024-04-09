@@ -8,6 +8,8 @@ import com.saysimple.users.vo.ResponseUser;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Iterable<UserEntity> getUserByAll(){
+    public Iterable<UserEntity> getUserByAll() {
         return userRepository.findAll();
     }
 
@@ -59,9 +61,28 @@ public class UserServiceImpl implements UserService {
 
         ResponseUser userResponse = new ModelMapper().map(userEntity, ResponseUser.class);
 
-        List<ResponseOrder> orders= new ArrayList<>();
+        List<ResponseOrder> orders = new ArrayList<>();
         userResponse.setOrders(orders);
 
         return userResponse;
+    }
+
+    @Override
+    public UserDto getUserDetailsByEmail(String email) {
+        ModelMapper mapper = new ModelMapper();
+        UserEntity user = userRepository.findByEmail(email);
+        return mapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(username);
+
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(username);
+        }
+
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(), true, true,
+                true, true, new ArrayList<>());
     }
 }
