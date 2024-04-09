@@ -2,6 +2,8 @@ spring:
   config:
     activate:
       on-profile: default
+  main:
+    web-application-type: reactive
 
   application:
     name: gateway
@@ -30,7 +32,7 @@ spring:
         - id: users
           uri: lb://USERS
           predicates:
-            - Path=/users/users
+            - Path=/users
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie

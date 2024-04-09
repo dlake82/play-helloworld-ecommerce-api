@@ -3,8 +3,6 @@ package com.saysimple.users.services;
 import com.saysimple.users.dto.UserDto;
 import com.saysimple.users.jpa.UserEntity;
 import com.saysimple.users.jpa.UserRepository;
-import com.saysimple.users.vo.ResponseOrder;
-import com.saysimple.users.vo.ResponseUser;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -53,18 +50,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseUser getUserByUserId(String userId) {
+    public UserDto getUserByUserId(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null)
             throw new UsernameNotFoundException("User not found");
 
-        ResponseUser userResponse = new ModelMapper().map(userEntity, ResponseUser.class);
+        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
+        userDto.setOrders(new ArrayList<>());
 
-        List<ResponseOrder> orders = new ArrayList<>();
-        userResponse.setOrders(orders);
-
-        return userResponse;
+        return userDto;
     }
 
     @Override

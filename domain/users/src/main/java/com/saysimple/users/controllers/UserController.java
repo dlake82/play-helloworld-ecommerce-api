@@ -5,10 +5,13 @@ import com.saysimple.users.jpa.UserEntity;
 import com.saysimple.users.services.UserService;
 import com.saysimple.users.vo.RequestUser;
 import com.saysimple.users.vo.ResponseUser;
+import io.micrometer.core.annotation.Timed;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/")
 public class UserController {
-
     private final Environment env;
     private final UserService userService;
 
@@ -29,12 +34,22 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @GetMapping("/health-check")
+    @Timed(value = "users.status", longTask = true)
     public String status() {
-        return String.format("It's Working in User Serice on port %s", env.getProperty("local.server.port"));
+        return String.format("It's Working in User Service"
+                + ", port(local.server.port)=" + env.getProperty("local.server.port")
+                + ", port(server.port)=" + env.getProperty("server.port")
+                + ", gateway ip(env)=" + env.getProperty("gateway.ip")
+//                + ", gateway ip(value)=" + greeting.getIp()
+//                + ", message=" + env.getProperty("greeting.message")
+//                + ", token secret=" + env.getProperty("token.secret")
+//                + ", token secret=" + greeting.getSecret()
+                + ", token expiration time=" + env.getProperty("token.expiration_time"));
     }
 
-    @PostMapping
+    @PostMapping("/users")
     public ResponseEntity<ResponseUser> create(@RequestBody RequestUser user) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -47,23 +62,32 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> list() {
-        Iterable<UserEntity> users = userService.getUserByAll();
+        Iterable<UserEntity> userList = userService.getUserByAll();
 
-        ModelMapper mapper = new ModelMapper();
         List<ResponseUser> result = new ArrayList<>();
-        users.forEach(v -> {
-            result.add(mapper.map(v, ResponseUser.class));
+        userList.forEach(v -> {
+            result.add(new ModelMapper().map(v, ResponseUser.class));
         });
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> get(@PathVariable("userId") String userId) {
-        ResponseUser user = userService.getUserByUserId(userId);
+        UserDto userDto = userService.getUserByUserId(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        ResponseUser returnValue = new ModelMapper().map(userDto, ResponseUser.class);
+
+        EntityModel<ResponseUser> entityModel = EntityModel.of(returnValue);
+        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).list());
+        entityModel.add(linkTo.withRel("all-users"));
+
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(entityModel.getContent());
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
     }
 }
