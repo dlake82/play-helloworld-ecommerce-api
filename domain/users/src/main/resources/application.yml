@@ -36,3 +36,11 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+token:
+  secret: users_service_secret_token
+  expiration_time: 86400000
+
+logging:
+  level:
+    com.saysimple.users: DEBUG

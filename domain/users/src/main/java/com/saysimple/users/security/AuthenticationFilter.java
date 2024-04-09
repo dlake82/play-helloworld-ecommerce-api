@@ -35,7 +35,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
                                 UserService userService, Environment env) {
-        super(authenticationManager);
+        super.setAuthenticationManager(authenticationManager);
         this.userService = userService;
         this.env = env;
     }
@@ -44,12 +44,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {
         try {
-
             RequestLogin creds = new ObjectMapper().readValue(req.getInputStream(), RequestLogin.class);
 
             return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()));
-
+                    new UsernamePasswordAuthenticationToken(
+                            creds.getEmail(),
+                            creds.getPassword(),
+                            new ArrayList<>()
+                    )
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
