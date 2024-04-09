@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -27,17 +28,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto create(OrderDto orderDto) {
-        orderDto.setOrderId(UUID.randomUUID().toString());
-        orderDto.setTotalPrice(orderDto.getQty() * orderDto.getUnitPrice());
-
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        OrderEntity orderEntity = mapper.map(orderDto, OrderEntity.class);
 
+        orderDto.setOrderId(UUID.randomUUID().toString());
+        orderDto.setTotalPrice(orderDto.getQty() * orderDto.getUnitPrice());
+        OrderEntity orderEntity = mapper.map(orderDto, OrderEntity.class);
         orderRepository.save(orderEntity);
 
         return mapper.map(orderEntity, OrderDto.class);
 
+    }
+
+    @Override
+    public Iterable<OrderEntity> list(){
+        return orderRepository.findAll();
     }
 
     @Override
