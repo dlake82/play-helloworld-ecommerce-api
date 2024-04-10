@@ -23,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/")
 public class OrderController {
     Environment env;
     OrderService orderService;
@@ -62,7 +62,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(createdOrderDto, ResponseOrder.class));
     }
 
-    @GetMapping
+    @GetMapping("/orders")
     public ResponseEntity<List<ResponseOrder>> list() {
         Iterable<OrderEntity> orders = orderService.list();
         ModelMapper mapper = new ModelMapper();
@@ -88,7 +88,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(order, ResponseOrder.class));
     }
 
-    @GetMapping("/{userId}/users")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<List<ResponseOrder>> list(@PathVariable("userId") String userId) {
         Iterable<OrderEntity> orders = orderService.listByUserId(userId);
 

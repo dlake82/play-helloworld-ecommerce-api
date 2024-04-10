@@ -1,4 +1,4 @@
-package com.saysimple.configs;
+package com.saysimple.configs.controllers;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
