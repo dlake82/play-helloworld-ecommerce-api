@@ -2,5 +2,5 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
-      name: decosk
+      name: application
       profile: dev

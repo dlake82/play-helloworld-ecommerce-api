@@ -9,12 +9,9 @@ spring:
     port: 5672
     username: guest
     password: guest
-
   cloud:
     config:
       server:
-        native:
-          uri: file://${user.home}/config-repo
         git:
           uri: https://github.com/saysimple0828/decosk-api-secret
 
