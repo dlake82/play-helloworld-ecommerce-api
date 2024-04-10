@@ -1,13 +1,26 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 spring:
   config:
     activate:
       on-profile: default
   main:
     web-application-type: reactive
-
   application:
     name: gateway
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     gateway:
       default-filters:
@@ -17,10 +30,6 @@ spring:
             preLogger: true
             postLogger: true
       routes:
-        #        - id: users
-        #          uri: lb://USERS
-        #          predicates:
-        #            - Path=/users/**
         - id: users
           uri: lb://USERS
           predicates:
@@ -45,6 +54,15 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/users/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+        - id: users
+          uri: lb://USERS
+          predicates:
+            - Path=/users/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
         - id: catalogs
           uri: lb://CATALOGS
           predicates:
@@ -54,12 +72,8 @@ spring:
           predicates:
             - Path=/orders/**
 
-server:
-  port: 8000
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httpexchanges, busrefresh

@@ -41,12 +41,9 @@ public class UserController {
         return String.format("It's Working in User Service"
                 + ", port(local.server.port)=" + env.getProperty("local.server.port")
                 + ", port(server.port)=" + env.getProperty("server.port")
-                + ", gateway ip(env)=" + env.getProperty("gateway.ip")
-//                + ", gateway ip(value)=" + greeting.getIp()
-//                + ", message=" + env.getProperty("greeting.message")
-//                + ", token secret=" + env.getProperty("token.secret")
-//                + ", token secret=" + greeting.getSecret()
-                + ", token expiration time=" + env.getProperty("token.expiration_time"));
+                + ", token secret=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration_time")
+        );
     }
 
     @PostMapping("/users")

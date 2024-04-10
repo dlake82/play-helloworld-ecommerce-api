@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: users
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa
@@ -37,10 +42,16 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
-token:
-  secret: users_service_secret_token
-  expiration_time: 86400000
-
 logging:
   level:
     com.saysimple.users: DEBUG
+
+#token:
+#  secret: saysimple_secret_token
+#  expiration_time: 86400000 # 하루
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh
