@@ -5,16 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e5ca806a-ae82-47e1-99f3-dc9059503522" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../keys/apiEncryptionKey.jks" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../keys/generate_key.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../keys/publicKey.jks" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../keys/trustServer.cer" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../publicKey.jks" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../configs/src/main/java/com/saysimple/configs/ConfigController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../configs/src/main/java/com/saysimple/configs/controllers/ConfigController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../configs/src/main/resources/bootstrap.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../configs/src/main/resources/bootstrap.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/orders/src/main/java/com/saysimple/orders/controllers/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/orders/src/main/java/com/saysimple/orders/controllers/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/UsersApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/UsersApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/UsersApplication.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/controllers/UserController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/dto/UserDto.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/jpa/UserEntity.java" beforeDir="false" />
@@ -29,8 +41,9 @@
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/java/com/saysimple/users/vo/ResponseUser.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/resources/application.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../domain/users/src/main/resources/bootstrap.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../domain/users/src/test/java/com/saysimple/users/UsersApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../domain/users/src/test/java/com/saysimple/users/UsersApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../domain/users/src/test/java/com/saysimple/users/UsersApplicationTests.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../envs" beforeDir="false" afterPath="$PROJECT_DIR$/../envs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../envs/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../envs/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +102,7 @@
       <updated>1712780093812</updated>
       <workItem from="1712780095033" duration="20000" />
       <workItem from="1712780130092" duration="2000" />
+      <workItem from="1712782251625" duration="9000" />
     </task>
     <servers />
   </component>
