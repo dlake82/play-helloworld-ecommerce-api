@@ -46,6 +46,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
             RequestLogin creds = new ObjectMapper().readValue(req.getInputStream(), RequestLogin.class);
+            log.info("attemptAuthentication, creds: {}", creds);
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -65,6 +66,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         // 유저 디테일 가져옴
         String userName = ((User) auth.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(userName);
+
+        log.info("successfulAuthentication, userName: {}", userName);
 
         // 토큰 생성
         byte[] secretKeyBytes = Base64.getEncoder().encode(Objects.requireNonNull(env.getProperty("token.secret")).getBytes());

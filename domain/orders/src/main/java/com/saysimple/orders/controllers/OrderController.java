@@ -23,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/orders")
 public class OrderController {
     Environment env;
     OrderService orderService;
@@ -50,7 +50,7 @@ public class OrderController {
                 env.getProperty("server.port"));
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> create(@PathVariable("userId") String userId, @RequestBody RequestOrder order) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -62,33 +62,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(createdOrderDto, ResponseOrder.class));
     }
 
-    @GetMapping("/orders")
-    public ResponseEntity<List<ResponseOrder>> list() {
-        Iterable<OrderEntity> orders = orderService.list();
-        ModelMapper mapper = new ModelMapper();
-
-        List<ResponseOrder> result = new ArrayList<>();
-        orders.forEach(v -> {
-            result.add(mapper.map(v, ResponseOrder.class));
-        });
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    @GetMapping("/{orderId}")
-    public ResponseEntity<ResponseOrder> get(@PathVariable("orderId") String orderId) throws HttpException {
-        log.info("OrderController get : " + orderId);
-        OrderDto order = orderService.get(orderId);
-        if (order == null) {
-            throw new HttpException("Order not found");
-        }
-
-        ModelMapper mapper = new ModelMapper();
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(order, ResponseOrder.class));
-    }
-
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> list(@PathVariable("userId") String userId) {
         Iterable<OrderEntity> orders = orderService.listByUserId(userId);
 

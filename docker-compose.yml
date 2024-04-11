@@ -8,3 +8,54 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+  zookeeper:
+    image: 'zookeeper:3.7'
+    ports:
+      - '2181:2181'
+
+  kafka1:
+    container_name: kafka1
+    image: 'confluentinc/cp-kafka:latest'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+    ports:
+      - '9092:9092'
+
+  kafka2:
+    container_name: kafka2
+    image: 'confluentinc/cp-kafka:latest'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093
+    ports:
+      - '9093:9093'
+
+  kafka3:
+    container_name: kafka3
+    image: 'confluentinc/cp-kafka:latest'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9094
+    ports:
+      - '9094:9094'
+      
+  mariadb:
+    container_name: mariadb
+    image: 'mariadb:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+    ports:
+      - '3306:3306'

@@ -44,7 +44,7 @@ eureka:
 
 logging:
   level:
-    com.saysimple.users: DEBUG
+    com.saysimple.users.client: DEBUGs
 
 #token:
 #  secret: saysimple_secret_token

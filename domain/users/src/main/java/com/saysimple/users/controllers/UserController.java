@@ -71,7 +71,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/users/{userId}")
+    // TODO: 유저 아이디 조회 아직 테스트 안됨
+    @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> get(@PathVariable("userId") String userId) {
         UserDto userDto = userService.getUserByUserId(userId);
 
