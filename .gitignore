@@ -1,1 +1,9 @@
+# editor
+.idea/*
+.vscode/*
+
+# database
 mariadb/data/*
+
+# kafka
+kafka/jars/*

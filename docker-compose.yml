@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
       - 5672:5672
@@ -10,6 +11,7 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
 
   zookeeper:
+    container_name: zookeeper
     image: 'zookeeper:3.7'
     ports:
       - '2181:2181'
@@ -53,9 +55,35 @@ services:
   mariadb:
     container_name: mariadb
     image: 'mariadb:latest'
-    environment:
-      MYSQL_ROOT_PASSWORD: mariadb
-    volumes:
-      - ./mariadb/data:/var/lib/mysql
     ports:
       - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test1234
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+
+  connect:
+    container_name: connect
+    image: 'confluentinc/cp-kafka-connect:latest'
+    depends_on:
+      - kafka1
+      - mariadb
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: compose-connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: compose-connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: compose-connect-status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
+    volumes:
+      - ./kafka/jars:/etc/kafka-connect/jars
