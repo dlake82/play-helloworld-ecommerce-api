@@ -5,32 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4d12418f-4e5c-4716-bfa5-3982b9848b86" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/install.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/connect-install.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/checker-qual-3.5.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/common-utils-6.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/jtds-1.3.1.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/kafka-connect-jdbc-10.7.6.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/mssql-jdbc-8.4.1.jre8.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/ojdbc8-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/ons-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/oraclepki-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/orai18n-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/osdt_cert-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/osdt_core-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/postgresql-42.4.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/simplefan-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/slf4j-api-1.7.36.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/sqlite-jdbc-3.41.2.2.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/ucp-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/xdb-19.7.0.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kafka/jars/xmlparserv2-19.7.0.0.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/envs" beforeDir="false" afterPath="$PROJECT_DIR$/envs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/publicKey.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/kafka/connect-install.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,9 +43,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -83,36 +61,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.docker-compose.yml.kafka-connect: Compose Deployment.executor": "Run",
-    "Gradle.Build decosk-api.executor": "Run",
-    "Gradle.C:/Users/Administrator/Documents/GitHub/decosk-api/gateway/discovery [bootRun].executor": "Run",
-    "Gradle.catalogs.executor": "Run",
-    "Gradle.discovery.executor": "Run",
-    "Gradle.gateway.executor": "Run",
-    "Gradle.orders.executor": "Run",
-    "Gradle.users.executor": "Run",
-    "Kotlin script (Beta).build.gradle.kts.executor": "Run",
-    "Kotlin.DecoskApplicationKt.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/cloud",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Administrator/Documents/GitHub/decosk-api",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "/Users/gusdn0828/Documents/GitHub/decosk/src/main/kotlin/Main.kt",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.570115",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.docker-compose.yml.kafka-connect: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build decosk-api.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.C:/Users/Administrator/Documents/GitHub/decosk-api/gateway/discovery [bootRun].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.catalogs.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.discovery.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.gateway.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.orders.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.users.executor&quot;: &quot;Run&quot;,
+    &quot;Kotlin script (Beta).build.gradle.kts.executor&quot;: &quot;Run&quot;,
+    &quot;Kotlin.DecoskApplicationKt.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/cloud&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Administrator/Documents/GitHub/decosk-api&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/gusdn0828/Documents/GitHub/decosk/src/main/kotlin/Main.kt&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.570115&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Administrator\Documents\GitHub\decosk-api\kafka" />
@@ -244,7 +222,9 @@
       </method>
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration name="docker-compose.yml.kafka-connect: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
@@ -287,7 +267,8 @@
       <workItem from="1712538333556" duration="184000" />
       <workItem from="1712583043697" duration="1000" />
       <workItem from="1712584801336" duration="4385000" />
-      <workItem from="1712850353061" duration="3733000" />
+      <workItem from="1712850353061" duration="6307000" />
+      <workItem from="1712890586976" duration="2061000" />
     </task>
     <servers />
   </component>

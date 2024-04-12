@@ -4,6 +4,3 @@
 
 # database
 mariadb/data/*
-
-# kafka
-kafka/jars/*
