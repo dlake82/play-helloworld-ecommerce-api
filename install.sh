@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Install Kafka Connect JDBC
-./kafka/connect-install.sh
+./kafka/connect-download.sh
 
 # Start the services
-docker-compose up --build -d --force-recreate
+docker-compose down && docker-compose up -d
 
-sleep 10
+# Install Kafka Source Connector
+./kafka/connect-source-install.sh

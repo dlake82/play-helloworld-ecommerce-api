@@ -66,6 +66,8 @@ services:
       MYSQL_PASSWORD: test1234
     volumes:
       - ./mariadb/data:/var/lib/mysql
+    networks:
+      - default
 
   connect:
     container_name: connect
@@ -92,4 +94,4 @@ services:
     ports:
       - '8083:8083'
     volumes:
-      - ./kafka/libs:/etc/kafka-connect/jars
+      - ./kafka/jars:/etc/kafka-connect/jars

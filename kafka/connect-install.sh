@@ -1,31 +1,47 @@
-#!/bin/bash
+# Wait for Kafka Connect to start
+echo "Waiting for Kafka Connect to start..."
+while [ $(curl -s -o /dev/null -w %{http_code} http://localhost:8083/connectors) -eq 000 ]
+do
+  echo -e $(date) " Kafka Connect listener HTTP state: " $(curl -s -o /dev/null -w %{http_code} http://localhost:8083/connectors) " (waiting for 200)"
+  sleep 5
+done
 
-# Kafka Connect JDBC plugin
-CONNECT_URL="https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-jdbc/versions/10.7.6/confluentinc-kafka-connect-jdbc-10.7.6.zip"
-JDBC_FILE_NAMEFILE_NAME="confluentinc-kafka-connect-jdbc-10.7.6.zip"
-TARGET_DIR="./kafka/libs"
+# Delete the connectors
+curl -X DELETE http://localhost:8083/connectors/my-source-connect
 
-# MariaDB Java client
-MARIA_JAVA_CLIENT_FILE_NAME=mariadb-java-client-3.3.3.jar
-MARIA_JAVA_CLIENT_URL="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.3.3/$MARIA_JAVA_CLIENT_FILE_NAME"
+echo '
+{
+  "name" : "my-source-connect",
+  "config" : {
+    "connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url":"jdbc:mysql://mariadb:3306/mydb",
+    "connection.user":"test",
+    "connection.password":"test1234",
+    "mode": "incrementing",
+    "incrementing.column.name" : "id",
+    "table.whitelist":"users",
+    "topic.prefix" : "my_topic_",
+    "tasks.max" : "1"
+  }
+}
+' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
 
-# rm kafka libs
-rm -rf $TARGET_DIR
+# Install the connectors
+curl -X DELETE http://localhost:8083/connectors/my-sink-connect
 
-# Download and extract the Kafka Connect JDBC plugin
-mkdir -p $TARGET_DIR
-curl -L $CONNECT_URL -o $JDBC_FILE_NAMEFILE_NAME
-
-unzip $JDBC_FILE_NAMEFILE_NAME
-cp -r confluentinc-kafka-connect-jdbc-10.7.6/lib/* $TARGET_DIR
-
-rm $JDBC_FILE_NAMEFILE_NAME
-rm -rf confluentinc-kafka-connect-jdbc-10.7.6
-
-# Download the MariaDB Java client
-echo Download the MariaDB Java client
-
-rm -rf $MARIA_JAVA_CLIENT_FILE_NAME
-
-curl -L "$MARIA_JAVA_CLIENT_URL" -o $TARGET_DIR/$MARIA_JAVA_CLIENT_FILE_NAME
-mv $MARIA_JAVA_CLIENT_FILE_NAME $TARGET_DIR
+echo '
+{
+  "name":"my-sink-connect",
+      "config": {
+      "connector.class":"io.confluent.connect.jdbc.JdbcSinkConnector",
+      "connection.url":"jdbc:mysql://mariadb:3306/mydb",
+      "connection.user":"test",
+      "connection.password":"test1234",
+      "auto.create":"true",
+      "auto.evolve":"true",
+      "delete.enabled":"false",
+      "tasks.max":"1",
+      "topics":"my_topic_users"
+  }
+}
+'| curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
