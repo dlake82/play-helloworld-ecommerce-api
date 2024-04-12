@@ -27,7 +27,6 @@ public class KafkaConsumer {
     public void updateQty(String kafkaMessage){
         log.info("kafka message: " + kafkaMessage);
 
-
         Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -37,10 +36,13 @@ public class KafkaConsumer {
             ex.printStackTrace();
         }
 
-        CatalogEntity entity = repository.findByProductId((String)map.get("productId"));
+        String productId = (String)map.get("productId");
+        CatalogEntity entity = repository.findByProductId(productId);
+        log.info(productId);
+
         if (entity != null){
             entity.setStock(entity.getStock() - (Integer)map.get("qty"));
+            repository.save(entity);
         }
     }
-
 }

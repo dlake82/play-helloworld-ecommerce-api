@@ -1,12 +1,13 @@
-package com.saysimple.catalogs.dto;
+package com.saysimple.catalogs.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class CatalogDto implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RequestCatalog {
     private String productId;
     private String productName;
     private Integer unitPrice;

@@ -67,6 +67,8 @@ spring:
           uri: lb://CATALOGS
           predicates:
             - Path=/catalogs/**
+          filters:
+            - RewritePath=/catalogs/(?<segment>.*), /$\{segment}
         - id: orders
           uri: lb://ORDERS
           predicates:
