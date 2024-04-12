@@ -45,3 +45,10 @@ echo '
   }
 }
 '| curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
+
+echo
+echo "Connector list"
+
+curl -X GET http://localhost:8083/connectors
+
+sleep 2
