@@ -7,4 +7,4 @@
 docker-compose down && docker-compose up -d
 
 # Install Kafka Source Connector
-./kafka/connect-source-install.sh
+./kafka/connect-install.sh

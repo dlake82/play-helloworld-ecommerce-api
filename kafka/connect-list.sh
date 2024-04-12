@@ -1,3 +1,8 @@
-curl -X GET http://localhost:8083/connectors
+#!/bin/bash
 
-sleep 5
+echo
+echo
+echo "Connector list"
+echo
+
+curl -X GET http://localhost:8083/connectors

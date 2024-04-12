@@ -6,49 +6,44 @@ do
   sleep 5
 done
 
+ORDER_SOURCE_CONNECT=decosk-order-source-connect
+ORDER_SINK_CONNECT=decosk-order-sink-connect
+
 # Delete the connectors
-curl -X DELETE http://localhost:8083/connectors/my-source-connect
+./kafka/connect-delete.sh
+
+# echo '
+# {
+#   "name" : "decosk-order-source-connect",
+#   "config" : {
+#     "connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector",
+#     "connection.url":"jdbc:mysql://mariadb:3306/mydb",
+#     "connection.user":"test",
+#     "connection.password":"test1234",
+#     "mode": "incrementing",
+#     "incrementing.column.name" : "id",
+#     "table.whitelist":"users",
+#     "topic.prefix" : "order",
+#     "tasks.max" : "1"
+#   }
+# }
+# ' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
 
 echo '
 {
-  "name" : "my-source-connect",
-  "config" : {
-    "connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "connection.url":"jdbc:mysql://mariadb:3306/mydb",
-    "connection.user":"test",
-    "connection.password":"test1234",
-    "mode": "incrementing",
-    "incrementing.column.name" : "id",
-    "table.whitelist":"users",
-    "topic.prefix" : "my_topic_",
-    "tasks.max" : "1"
-  }
-}
-' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
-
-# Install the connectors
-curl -X DELETE http://localhost:8083/connectors/my-sink-connect
-
-echo '
-{
-  "name":"my-sink-connect",
+  "name":"decosk-order-sink-connect",
       "config": {
       "connector.class":"io.confluent.connect.jdbc.JdbcSinkConnector",
       "connection.url":"jdbc:mysql://mariadb:3306/mydb",
-      "connection.user":"test",
-      "connection.password":"test1234",
+      "connection.user":"root",
+      "connection.password":"mariadb",
       "auto.create":"true",
       "auto.evolve":"true",
       "delete.enabled":"false",
       "tasks.max":"1",
-      "topics":"my_topic_users"
+      "topics":"order"
   }
 }
 '| curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
 
-echo
-echo "Connector list"
-
-curl -X GET http://localhost:8083/connectors
-
-sleep 2
+./kafka/connect-list.sh

@@ -7,7 +7,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestOrder {
     private String productId;
-    private String qty;
+    private Integer qty;
     private Integer unitPrice;
     private Integer totalPrice;
     private String orderId;
