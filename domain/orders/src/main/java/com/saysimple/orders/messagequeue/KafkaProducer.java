@@ -23,7 +23,6 @@ public class KafkaProducer {
         String jsonInString = "";
         try{
             jsonInString = mapper.writeValueAsString(orderDto);
-
         } catch (JsonProcessingException ex) {
             ex.printStackTrace();
         }
