@@ -2,28 +2,30 @@ server:
   port: 8888
 
 spring:
+#  profiles:
+#    active: native
   application:
-    name: configs
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    name: config-service
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/saysimple0828/decosk-api-secret
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+        native:
+          search-locations: file:///C://work//git-local-repo
+        git: #default
+          uri: https://github.com/joneconsulting/spring-cloud-config
+          default-label: master
+        bootstrap: true
+#              basedir: /Users/dowonlee/Desktop/Work/tmp/config-repo
+#              username: [username]
+#              password: [password]
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, busrefresh
+        include: health, busrefresh, refresh, metrics

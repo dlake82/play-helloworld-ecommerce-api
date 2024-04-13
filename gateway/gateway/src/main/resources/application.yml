@@ -6,21 +6,23 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka
 
 spring:
   config:
     activate:
       on-profile: default
-  main:
-    web-application-type: reactive
+
   application:
-    name: gateway
+    name: apigateway-service
   rabbitmq:
-    host: localhost
+    host: 127.0.0.1
     port: 5672
     username: guest
     password: guest
+    listener:
+      simple:
+        prefetch: 5
   cloud:
     gateway:
       default-filters:
@@ -30,52 +32,82 @@ spring:
             preLogger: true
             postLogger: true
       routes:
-        - id: users
-          uri: lb://USERS
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/users/login
+            - Path=/user-service/login
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/users/(?<segment>.*), /$\{segment}
-        - id: users
-          uri: lb://USERS
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/users
+            - Path=/user-service/users
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/users/(?<segment>.*), /$\{segment}
-        - id: users
-          uri: lb://USERS
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/users/**
-            - Method=GET
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/users/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
-        - id: users
-          uri: lb://USERS
-          predicates:
-            - Path=/users/actuator/**
+            - Path=/user-service/actuator/**
             - Method=GET,POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/users/(?<segment>.*), /$\{segment}
-        - id: catalogs
-          uri: lb://CATALOGS
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/catalogs/**
+            - Path=/user-service/**
+            - Method=GET
           filters:
-            - RewritePath=/catalogs/(?<segment>.*), /$\{segment}
-        - id: orders
-          uri: lb://ORDERS
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
           predicates:
-            - Path=/orders/**
+            - Path=/catalog-service/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+        - id: first-service
+          uri: lb://MY-FIRST-SERVICE
+          predicates:
+            - Path=/first-service/**
+          filters:
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter
+        - id: second-service
+          uri: lb://MY-SECOND-SERVICE
+          predicates:
+            - Path=/second-service/**
+          filters:
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+#            - name: LoggingFilter
+#              args:
+#                baseMessage: Hi, there.
+#                preLogger: true
+#                postLogger: true
+
+token:
+  secret: user_token
 
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httpexchanges, busrefresh
+        include: refresh, health, beans, httpexchanges, busrefresh, info, metrics, prometheus
