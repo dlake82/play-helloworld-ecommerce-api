@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: order-service
+    name: orders
   rabbitmq:
     host: 127.0.0.1
     port: 5672

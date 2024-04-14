@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/order-service")
+@RequestMapping("/orders")
 @Slf4j
 public class OrderController {
     Environment env;

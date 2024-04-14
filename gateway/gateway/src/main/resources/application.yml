@@ -14,7 +14,7 @@ spring:
       on-profile: default
 
   application:
-    name: apigateway-service
+    name: gateway
   rabbitmq:
     host: 127.0.0.1
     port: 5672
@@ -32,79 +32,55 @@ spring:
             preLogger: true
             postLogger: true
       routes:
-        - id: user-service
-          uri: lb://USER-SERVICE
+        - id: users
+          uri: lb://USERS
           predicates:
-            - Path=/user-service/login
+            - Path=/users/login
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: users
+          uri: lb://USERS
           predicates:
-            - Path=/user-service/users
+            - Path=/users
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: users
+          uri: lb://USERS
           predicates:
-            - Path=/user-service/actuator/**
+            - Path=/users/actuator/**
             - Method=GET,POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: users
+          uri: lb://USERS
           predicates:
-            - Path=/user-service/**
+            - Path=/users/**
             - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
-        - id: catalog-service
-          uri: lb://CATALOG-SERVICE
+        - id: catalogs
+          uri: lb://CATALOGS
           predicates:
-            - Path=/catalog-service/**
-        - id: order-service
-          uri: lb://ORDER-SERVICE
+            - Path=/catalogs/**
+        - id: orders
+          uri: lb://ORDERS
           predicates:
-            - Path=/order-service/actuator/**
+            - Path=/orders/actuator/**
             - Method=GET,POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
-        - id: order-service
-          uri: lb://ORDER-SERVICE
+            - RewritePath=/orders/(?<segment>.*), /$\{segment}
+        - id: orders
+          uri: lb://ORDERS
           predicates:
-            - Path=/order-service/**
-        - id: first-service
-          uri: lb://MY-FIRST-SERVICE
-          predicates:
-            - Path=/first-service/**
-          filters:
-#            - AddRequestHeader=first-request, first-request-header2
-#            - AddResponseHeader=first-response, first-response-header2
-            - CustomFilter
-        - id: second-service
-          uri: lb://MY-SECOND-SERVICE
-          predicates:
-            - Path=/second-service/**
-          filters:
-#            - AddRequestHeader=second-request, second-request-header2
-#            - AddResponseHeader=second-response, second-response-header2
-            - name: CustomFilter
-#            - name: LoggingFilter
-#              args:
-#                baseMessage: Hi, there.
-#                preLogger: true
-#                postLogger: true
-
-token:
-  secret: user_token
+            - Path=/orders/**
 
 management:
   endpoints:

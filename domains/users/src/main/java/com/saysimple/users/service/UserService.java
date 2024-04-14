@@ -5,10 +5,11 @@ import com.saysimple.users.jpa.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
-    UserDto createUser(UserDto userDto);
+    UserDto create(UserDto userDto);
 
-    UserDto getUserByUserId(String userId);
-    Iterable<UserEntity> getUserByAll();
+    UserDto get(String userId);
 
-    UserDto getUserDetailsByEmail(String userName);
+    Iterable<UserEntity> list();
+
+    UserDto getByEmail(String userName);
 }
