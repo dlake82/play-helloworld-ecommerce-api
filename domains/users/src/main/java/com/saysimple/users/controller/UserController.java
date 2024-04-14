@@ -5,7 +5,6 @@ import com.saysimple.users.jpa.UserEntity;
 import com.saysimple.users.service.UserService;
 import com.saysimple.users.vo.RequestUser;
 import com.saysimple.users.vo.ResponseUser;
-import com.saysimple.users.vo.ResponseUserDetails;
 import io.micrometer.core.annotation.Timed;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -79,14 +78,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
-    @GetMapping("/{userId}/details")
-    public ResponseEntity<ResponseUserDetails> getDetails(@PathVariable("userId") String userId) {
-        UserDto userDto = userService.get(userId);
-
-        ResponseUser userDetails = new ModelMapper().map(userDto, ResponseUserDetails.class);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userDetails);
-    }
 
     @GetMapping("/users/hateoas")
     public ResponseEntity<CollectionModel<EntityModel<ResponseUser>>> getWithHateoas() {
