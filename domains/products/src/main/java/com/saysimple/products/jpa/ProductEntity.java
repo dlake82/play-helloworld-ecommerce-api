@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -20,10 +18,10 @@ public class ProductEntity implements Serializable {
     private String name;
     @Column(nullable = false, length = 50)
     private String category;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
-    @JoinColumn(name = "option_id")
-    private List<OptionEntity> options = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
-    @JoinColumn(name = "info_id")
-    private List<InfoEntity> infos = new ArrayList<>();
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
+//    @JoinColumn(name = "option_id")
+//    private List<OptionEntity> options = new ArrayList<>();
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
+//    @JoinColumn(name = "info_id")
+//    private List<InfoEntity> infos = new ArrayList<>();
 }

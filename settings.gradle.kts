@@ -11,6 +11,7 @@ include("domains:histories")
 include("domains:payments")
 include("domains:reviews")
 include("domains:supports")
+include("utils")
 
 include("configs")
 
@@ -26,3 +27,4 @@ include("configs")
 //        kotlin("plugin.spring") version KOTLIN_VERSION
 //    }
 //}
+include("utils")
