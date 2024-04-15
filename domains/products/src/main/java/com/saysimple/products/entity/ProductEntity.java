@@ -1,4 +1,4 @@
-package com.saysimple.products.jpa;
+package com.saysimple.products.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

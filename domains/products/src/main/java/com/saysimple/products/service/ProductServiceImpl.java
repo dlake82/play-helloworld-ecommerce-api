@@ -1,7 +1,7 @@
 package com.saysimple.products.service;
 
-import com.saysimple.products.jpa.ProductEntity;
-import com.saysimple.products.jpa.ProductRepository;
+import com.saysimple.products.entity.ProductEntity;
+import com.saysimple.products.repository.ProductRepository;
 import com.saysimple.products.vo.ProductRequest;
 import com.saysimple.products.vo.ProductRequestUpdate;
 import com.saysimple.products.vo.ProductResponse;

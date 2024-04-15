@@ -1,5 +1,6 @@
-package com.saysimple.products.jpa;
+package com.saysimple.products.repository;
 
+import com.saysimple.products.entity.ProductEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

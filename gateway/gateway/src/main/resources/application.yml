@@ -81,7 +81,10 @@ spring:
           uri: lb://ORDERS
           predicates:
             - Path=/orders/**
-
+        - id: products
+          uri: lb://PRODUCTS
+          predicates:
+            - Path=/products/**
 management:
   endpoints:
     web:

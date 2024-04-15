@@ -1,4 +1,4 @@
-package com.saysimple.users;
+package com.saysimple.products;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

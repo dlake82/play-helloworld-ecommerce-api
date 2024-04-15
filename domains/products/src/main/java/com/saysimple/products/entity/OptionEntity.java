@@ -1,4 +1,4 @@
-package com.saysimple.products.jpa;
+package com.saysimple.products.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "option")
+@Table(name = "\"option\"")
 public class OptionEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +16,6 @@ public class OptionEntity implements Serializable {
     private String productId;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "\"value\"")
     private String value;
 }
