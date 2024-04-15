@@ -1,19 +1,19 @@
 package com.saysimple.products.service;
 
-import com.saysimple.products.vo.RequestProduct;
-import com.saysimple.products.vo.ResponseProduct;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.saysimple.products.vo.ProductRequest;
+import com.saysimple.products.vo.ProductRequestUpdate;
+import com.saysimple.products.vo.ProductResponse;
 
 import java.util.List;
 
-public interface ProductService extends UserDetailsService {
-    ResponseProduct create(RequestProduct product);
+public interface ProductService {
+    ProductResponse create(ProductRequest product);
 
-    List<ResponseProduct> list();
+    List<ProductResponse> list();
 
-    ResponseProduct get(String productId);
+    ProductResponse get(String productId);
 
-    ResponseProduct update(RequestProduct product);
+    ProductResponse update(ProductRequestUpdate product);
 
-    boolean delete(String productId);
+    void delete(String productId);
 }
