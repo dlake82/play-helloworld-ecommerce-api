@@ -2,6 +2,7 @@ rootProject.name = "decosk"
 include("gateway:gateway")
 include("gateway:discovery")
 
+include("domains")
 include("domains:users")
 include("domains:products")
 include("domains:catalogs")
@@ -27,4 +28,3 @@ include("configs")
 //        kotlin("plugin.spring") version KOTLIN_VERSION
 //    }
 //}
-include("utils")

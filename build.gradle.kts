@@ -39,7 +39,7 @@ allprojects {
 }
 
 subprojects {
-    dependencies {
+    apply(plugin = "java")
 
-    }
+
 }

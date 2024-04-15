@@ -46,7 +46,7 @@ dependencies {
     implementation("io.micrometer:micrometer-observation")
 //    implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("io.zipkin.reporter2:zipkin-reporter-brave")
-    implementation ("org.mariadb.jdbc:mariadb-java-client:2.7.3")
+    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.3")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:3.1.0")
     implementation("org.springframework.hateoas:spring-hateoas")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
