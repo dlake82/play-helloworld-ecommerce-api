@@ -1,12 +1,13 @@
 package com.saysimple.products.controller;
 
 import com.saysimple.products.dto.ProductDto;
+import com.saysimple.products.entity.Product;
+import com.saysimple.products.repository.ProductRepository;
 import com.saysimple.products.service.ProductService;
 import com.saysimple.products.vo.RequestProduct;
 import com.saysimple.products.vo.ResponseProduct;
 import io.micrometer.core.annotation.Timed;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.hateoas.CollectionModel;
@@ -26,11 +27,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ProductController {
     private final Environment env;
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductController(Environment env, ProductService productService) {
+    public ProductController(Environment env, ProductService productService, ProductRepository productRepository) {
         this.env = env;
         this.productService = productService;
+        this.productRepository = productRepository;
     }
 
     @GetMapping("/health-check")
@@ -44,48 +47,51 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity<ResponseProduct> create(@RequestBody RequestProduct user) {
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        ProductDto productDto = mapper.map(user, ProductDto.class);
-        productService.create(productDto);
-
-        ResponseUser responseUser = mapper.map(productDto, ResponseUser.class);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+    public ResponseEntity<ResponseProduct> create(@RequestBody RequestProduct product) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(product));
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<ResponseUser>> list() {
-        Iterable<ProductEntity> userList = productService.list();
-
-        List<ResponseUser> result = new ArrayList<>();
-        userList.forEach(v -> {
-            result.add(new ModelMapper().map(v, ResponseUser.class));
-        });
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<List<ResponseProduct>> list() {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.list());
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ResponseUser> get(@PathVariable("userId") String userId) {
-        ProductDto productDto = productService.get(userId);
+    @GetMapping("/{productId}")
+    public ResponseEntity<ResponseProduct> get(@PathVariable("productId") String productId) {
+        ProductDto productDto = productService.get(productId);
 
-        ResponseUser returnValue = new ModelMapper().map(productDto, ResponseUser.class);
+        ResponseProduct returnValue = new ModelMapper().map(productDto, ResponseProduct.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<ResponseProduct> update(@PathVariable("productId") String productId) {
+        ProductDto productDto = productService.update()
+
+        ResponseProduct returnValue = new ModelMapper().map(productDto, ResponseProduct.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<ResponseProduct> delete(@PathVariable("productId") String productId) {
+        ProductDto productDto = productService.get(productId);
+
+        ResponseProduct returnValue = new ModelMapper().map(productDto, ResponseProduct.class);
 
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
 
     @GetMapping("/hateoas")
-    public ResponseEntity<CollectionModel<EntityModel<ResponseUser>>> getWithHateoas() {
-        List<EntityModel<ResponseUser>> result = new ArrayList<>();
-        Iterable<ProductEntity> users = productService.list();
+    public ResponseEntity<CollectionModel<EntityModel<ResponseProduct>>> getWithHateoas() {
+        List<EntityModel<ResponseProduct>> result = new ArrayList<>();
+        Iterable<Product> products = productService.list();
 
-        for (ProductEntity user : users) {
-            EntityModel entityModel = EntityModel.of(user);
-            entityModel.add(linkTo(methodOn(this.getClass()).get(user.getUserId())).withSelfRel());
+        for (Product product : products) {
+            EntityModel entityModel = EntityModel.of(product);
+            entityModel.add(linkTo(methodOn(this.getClass()).get(product.getProductId())).withSelfRel());
 
             result.add(entityModel);
         }

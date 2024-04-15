@@ -2,25 +2,31 @@ package com.saysimple.products.service;
 
 import com.saysimple.products.client.CatalogServiceClient;
 import com.saysimple.products.client.OrderServiceClient;
+import com.saysimple.products.dto.InfoDto;
+import com.saysimple.products.dto.OptionDto;
 import com.saysimple.products.dto.ProductDto;
-import com.saysimple.products.jpa.ProductEntity;
-import com.saysimple.products.jpa.ProductRepository;
+import com.saysimple.products.entity.Info;
+import com.saysimple.products.entity.Option;
+import com.saysimple.products.entity.Product;
+import com.saysimple.products.repository.ProductRepository;
+import com.saysimple.products.vo.RequestProduct;
+import com.saysimple.products.vo.ResponseProduct;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,69 +52,76 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ProductEntity productEntity = productRepository.findByEmail(username);
-
-        if (productEntity == null)
-            throw new UsernameNotFoundException(username + ": not found");
-
-        return new User(productEntity.getEmail(), productEntity.getEncryptedPwd(),
-                true, true, true, true,
-                new ArrayList<>());
-    }
-
-    @Override
-    public ProductDto create(ProductDto productDto) {
-        productDto.setUserId(UUID.randomUUID().toString());
-
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        ProductEntity productEntity = mapper.map(productDto, ProductEntity.class);
-        productEntity.setEncryptedPwd(passwordEncoder.encode(productDto.getPwd()));
-
-        productRepository.save(productEntity);
-
-        ProductDto returnProductDto = mapper.map(productEntity, ProductDto.class);
-
-        return returnProductDto;
-    }
-
-    @Override
-    public ProductDto get(String userId) {
-        ProductEntity productEntity = productRepository.findByUserId(userId);
-
-        log.info("UserEntity {}", productEntity);
-
-        if (productEntity == null)
-            throw new UsernameNotFoundException("User not found");
-
-        ProductDto productDto = new ModelMapper().map(productEntity, ProductDto.class);
-
-        log.info("Before call orders microservice");
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker1");
-        List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
-                throwable -> new ArrayList<>());
-        productDto.setOrders(orders);
-        log.info("After called orders microservice");
-
-        return productDto;
-    }
-
-    @Override
-    public Iterable<ProductEntity> list() {
-        return productRepository.findAll();
-    }
-
-    @Override
-    public ProductDto getByEmail(String email) {
-        ProductEntity productEntity = productRepository.findByEmail(email);
-        if (productEntity == null)
-            throw new UsernameNotFoundException(email);
-
+    public ResponseProduct create(RequestProduct requestProduct) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        ProductDto productDto = mapper.map(productEntity, ProductDto.class);
-        return productDto;
+        Product product = mapper.map(requestProduct, Product.class);
+        product.setProductId(UUID.randomUUID().toString());
+        Product createdProduct = productRepository.save(product);
+
+        return mapper.map(createdProduct, ResponseProduct.class);
+    }
+
+    @Override
+    public ProductDto get(String productId) {
+        Product product = productRepository.findByProductId(productId).orElseThrow(
+                () -> new NotFoundException("Product not found")
+        );
+
+        return new ModelMapper().map(product, ProductDto.class);
+    }
+
+    @Override
+    public List<ProductDto> list() {
+        ModelMapper mapper = new ModelMapper();
+        Iterable<Product> productEntities =  productRepository.findAll();
+        List<ProductDto> productDtos = new ArrayList<>();
+
+        productEntities.forEach(product -> {
+            List<InfoDto> infos = product.getInfos().stream()
+                    .map(info -> mapper.map(info, InfoDto.class))
+                    .collect(Collectors.toList());
+            List<OptionDto> options = product.getOptions().stream()
+                    .map(option -> mapper.map(option, OptionDto.class))
+                    .collect(Collectors.toList());
+
+            ProductDto productDto = mapper.map(product, ProductDto.class);
+            productDto.setInfos(infos);
+            productDto.setOptions(options);
+            productDtos.add(productDto);
+        });
+
+        return productDtos;
+    }
+
+    @Override
+    @Transactional
+    public ProductDto update(ProductDto productDto) {
+        ModelMapper mapper = new ModelMapper();
+        Product product = productRepository.findByProductId(productDto.getProductId())
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+        product.setName(productDto.getName());
+        product.setCategory(productDto.getCategory());
+
+        List<Info> infos = productDto.getInfos().stream()
+                .map(infoDto -> mapper.map(infoDto, Info.class))
+                .toList();
+        List<Option> options = productDto.getOptions().stream()
+                .map(optionDto -> mapper.map(optionDto, Option.class))
+                .toList();
+
+        product.setInfos(infos);
+        product.setOptions(options);
+
+        return mapper.map(product, ProductDto.class);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String productId) {
+        productRepository.delete(
+                productRepository.findByProductId(productId).orElseThrow(() -> new NotFoundException("Product not found"))
+        );
     }
 }

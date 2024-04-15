@@ -1,4 +1,4 @@
-package com.saysimple.products.jpa;
+package com.saysimple.products.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "option")
-public class OptionEntity implements Serializable {
+public class Option implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

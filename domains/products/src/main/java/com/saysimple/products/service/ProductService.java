@@ -1,15 +1,16 @@
 package com.saysimple.products.service;
 
 import com.saysimple.products.dto.ProductDto;
-import com.saysimple.products.jpa.ProductEntity;
+import com.saysimple.products.vo.RequestProduct;
+import com.saysimple.products.vo.ResponseProduct;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface ProductService extends UserDetailsService {
-    ProductDto create(ProductDto productDto);
-
-    ProductDto get(String userId);
-
-    Iterable<ProductEntity> list();
-
-    ProductDto getByEmail(String userName);
+    ResponseProduct create(RequestProduct product);
+    List<ResponseProduct> list();
+    ResponseProduct get(String productId);
+    ResponseProduct update(ProductDto productDto);
+    void delete(String productId);
 }

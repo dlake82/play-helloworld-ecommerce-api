@@ -3,17 +3,13 @@ package com.saysimple.products.dto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ProductDto {
-    private String email;
+    private String productId;
     private String name;
-    private String pwd;
-    private String userId;
-    private Date createdAt;
-
-    private String decryptedPwd;
-
-    private String encryptedPwd;
-
+    private String category;
+    private List<InfoDto> infos;
+    private List<OptionDto> options;
 }

@@ -1,4 +1,4 @@
-package com.saysimple.products.jpa;
+package com.saysimple.products.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "product")
-public class ProductEntity implements Serializable {
+public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,8 +22,8 @@ public class ProductEntity implements Serializable {
     private String category;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     @JoinColumn(name = "option_id")
-    private List<OptionEntity> options = new ArrayList<>();
+    private List<Option> options = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     @JoinColumn(name = "info_id")
-    private List<InfoEntity> infos = new ArrayList<>();
+    private List<Info> infos = new ArrayList<>();
 }
