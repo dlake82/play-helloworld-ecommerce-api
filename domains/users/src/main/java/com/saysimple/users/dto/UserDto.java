@@ -12,11 +12,9 @@ public class UserDto {
     private String name;
     private String pwd;
     private String userId;
-    private Date createdAt;
-
-    private String decryptedPwd;
-
+    private String profileImage;
     private String encryptedPwd;
+    private Date createdAt;
 
     private List<ResponseOrder> orders;
 }

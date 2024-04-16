@@ -52,11 +52,12 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authz) -> authz
                                 .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/health-check")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
 //                        .requestMatchers("/**").access(this::hasIpAddress)
                                 .requestMatchers("/**").access(
                                         new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1') or hasIpAddress('172.30.1.48')"))
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session

@@ -2,15 +2,17 @@ rootProject.name = "decosk"
 include("gateway:gateway")
 include("gateway:discovery")
 
+include("domains")
 include("domains:users")
 include("domains:products")
 include("domains:catalogs")
 include("domains:orders")
-include("domains:favorites")
-include("domains:histories")
-include("domains:payments")
-include("domains:reviews")
-include("domains:supports")
+//include("domains:favorites")
+//include("domains:histories")
+//include("domains:payments")
+//include("domains:reviews")
+//include("domains:supports")
+include("common")
 
 include("configs")
 

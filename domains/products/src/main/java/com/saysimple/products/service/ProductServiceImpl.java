@@ -1,127 +1,76 @@
 package com.saysimple.products.service;
 
-import com.saysimple.products.client.CatalogServiceClient;
-import com.saysimple.products.client.OrderServiceClient;
-import com.saysimple.products.dto.InfoDto;
-import com.saysimple.products.dto.OptionDto;
-import com.saysimple.products.dto.ProductDto;
-import com.saysimple.products.entity.Info;
-import com.saysimple.products.entity.Option;
-import com.saysimple.products.entity.Product;
+import com.saysimple.products.entity.ProductEntity;
 import com.saysimple.products.repository.ProductRepository;
-import com.saysimple.products.vo.RequestProduct;
-import com.saysimple.products.vo.ResponseProduct;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
+import com.saysimple.products.vo.ProductRequest;
+import com.saysimple.products.vo.ProductRequestUpdate;
+import com.saysimple.products.vo.ProductResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
+import org.saysimple.aop.exception.NotFoundException;
+import org.saysimple.utils.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
-    BCryptPasswordEncoder passwordEncoder;
-
     Environment env;
-    CircuitBreakerFactory circuitBreakerFactory;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository,
-                              BCryptPasswordEncoder passwordEncoder,
-                              Environment env,
-                              RestTemplate restTemplate,
-                              OrderServiceClient orderServiceClient,
-                              CatalogServiceClient catalogServiceClient,
-                              CircuitBreakerFactory circuitBreakerFactory) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.env = env;
-        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
     @Override
-    public ResponseProduct create(RequestProduct requestProduct) {
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    public ProductResponse create(ProductRequest product) {
+        ProductEntity productEntity = ModelUtils.mapper(product, ProductEntity.class);
+        productEntity.setProductId(UUID.randomUUID().toString());
+        productRepository.save(productEntity);
 
-        Product product = mapper.map(requestProduct, Product.class);
-        product.setProductId(UUID.randomUUID().toString());
-        Product createdProduct = productRepository.save(product);
-
-        return mapper.map(createdProduct, ResponseProduct.class);
+        return ModelUtils.mapper(productEntity, ProductResponse.class);
     }
 
     @Override
-    public ProductDto get(String productId) {
-        Product product = productRepository.findByProductId(productId).orElseThrow(
-                () -> new NotFoundException("Product not found")
-        );
+    public List<ProductResponse> list() {
+        List<ProductEntity> productEntities = (List<ProductEntity>) productRepository.findAll();
 
-        return new ModelMapper().map(product, ProductDto.class);
-    }
-
-    @Override
-    public List<ProductDto> list() {
-        ModelMapper mapper = new ModelMapper();
-        Iterable<Product> productEntities =  productRepository.findAll();
-        List<ProductDto> productDtos = new ArrayList<>();
-
-        productEntities.forEach(product -> {
-            List<InfoDto> infos = product.getInfos().stream()
-                    .map(info -> mapper.map(info, InfoDto.class))
-                    .collect(Collectors.toList());
-            List<OptionDto> options = product.getOptions().stream()
-                    .map(option -> mapper.map(option, OptionDto.class))
-                    .collect(Collectors.toList());
-
-            ProductDto productDto = mapper.map(product, ProductDto.class);
-            productDto.setInfos(infos);
-            productDto.setOptions(options);
-            productDtos.add(productDto);
-        });
-
-        return productDtos;
-    }
-
-    @Override
-    @Transactional
-    public ProductDto update(ProductDto productDto) {
-        ModelMapper mapper = new ModelMapper();
-        Product product = productRepository.findByProductId(productDto.getProductId())
-                .orElseThrow(() -> new NotFoundException("Product not found"));
-        product.setName(productDto.getName());
-        product.setCategory(productDto.getCategory());
-
-        List<Info> infos = productDto.getInfos().stream()
-                .map(infoDto -> mapper.map(infoDto, Info.class))
+        return productEntities.stream()
+                .map(entity -> ModelUtils.mapper(entity, ProductResponse.class))
                 .toList();
-        List<Option> options = productDto.getOptions().stream()
-                .map(optionDto -> mapper.map(optionDto, Option.class))
-                .toList();
+//                .collect(Collectors.toList());
+    }
 
-        product.setInfos(infos);
-        product.setOptions(options);
 
-        return mapper.map(product, ProductDto.class);
+    @Override
+    public ProductResponse get(String productId) {
+        ProductEntity productEntity = productRepository.findByProductId(productId).orElseThrow(() ->
+                new NotFoundException("Product not found"));
+
+        return ModelUtils.mapper(productEntity, ProductResponse.class);
+    }
+
+
+    @Override
+    public ProductResponse update(ProductRequestUpdate product) {
+        ProductEntity productEntity = productRepository.findByProductId(product.getProductId()).orElseThrow(() ->
+                new NotFoundException("Product not found"));
+
+        productEntity.setName(product.getName());
+        productEntity.setCategory(product.getCategory());
+
+        return ModelUtils.mapper(productEntity, ProductResponse.class);
     }
 
     @Override
-    @Transactional
     public void delete(String productId) {
-        productRepository.delete(
-                productRepository.findByProductId(productId).orElseThrow(() -> new NotFoundException("Product not found"))
-        );
+        ProductEntity productEntity = productRepository.findByProductId(productId).orElseThrow(() ->
+                new NotFoundException("Product not found"));
+
+        productRepository.delete(productEntity);
     }
 }

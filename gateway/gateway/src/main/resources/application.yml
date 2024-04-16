@@ -40,6 +40,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/users/(?<segment>.*), /$\{segment}
+
         - id: users
           uri: lb://USERS
           predicates:
@@ -48,6 +49,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/users/(?<segment>.*), /$\{segment}
+
         - id: users
           uri: lb://USERS
           predicates:
@@ -56,19 +58,24 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/users/(?<segment>.*), /$\{segment}
+
         - id: users
           uri: lb://USERS
           predicates:
             - Path=/users/**
             - Method=GET
           filters:
-            - RemoveRequestHeader=Cookie
             - RewritePath=/users/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+
         - id: catalogs
           uri: lb://CATALOGS
           predicates:
             - Path=/catalogs/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/orders/(?<segment>.*), /$\{segment}
+
         - id: orders
           uri: lb://ORDERS
           predicates:
@@ -77,10 +84,16 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/orders/(?<segment>.*), /$\{segment}
+
         - id: orders
           uri: lb://ORDERS
           predicates:
             - Path=/orders/**
+
+        - id: products
+          uri: lb://PRODUCTS
+          predicates:
+            - Path=/products/**
 
 management:
   endpoints:

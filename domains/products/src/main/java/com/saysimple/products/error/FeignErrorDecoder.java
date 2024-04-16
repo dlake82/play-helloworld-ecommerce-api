@@ -1,4 +1,4 @@
-package com.saysimple.users.error;
+package com.saysimple.products.error;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

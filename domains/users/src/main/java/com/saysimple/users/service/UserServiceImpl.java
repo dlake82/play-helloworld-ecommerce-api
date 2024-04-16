@@ -3,12 +3,14 @@ package com.saysimple.users.service;
 import com.saysimple.users.client.CatalogServiceClient;
 import com.saysimple.users.client.OrderServiceClient;
 import com.saysimple.users.dto.UserDto;
-import com.saysimple.users.jpa.UserEntity;
-import com.saysimple.users.jpa.UserRepository;
+import com.saysimple.users.entity.UserEntity;
+import com.saysimple.users.error.exception.NotFoundException;
+import com.saysimple.users.repository.UserRepository;
 import com.saysimple.users.vo.ResponseOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.saysimple.utils.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -68,29 +70,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto create(UserDto userDto) {
-        userDto.setUserId(UUID.randomUUID().toString());
+    public UserDto create(UserDto userDto) throws NotFoundException {
+        UserEntity userEntity = ModelUtils.strictMapper(userDto, UserEntity.class);
 
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserEntity userEntity = mapper.map(userDto, UserEntity.class);
+        userEntity.setUserId(UUID.randomUUID().toString());
         userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
+        userEntity.setIsActive(true);
 
-        userRepository.save(userEntity);
-
-        UserDto returnUserDto = mapper.map(userEntity, UserDto.class);
-
-        return returnUserDto;
+        try{
+            return ModelUtils.strictMapper(userRepository.save(userEntity), UserDto.class);
+        }catch(Exception e){
+            throw new NotFoundException("User already exists");
+        }
     }
 
     @Override
-    public UserDto get(String userId) {
+    public UserDto get(String userId) throws NotFoundException {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         log.info("UserEntity {}", userEntity);
 
         if (userEntity == null)
-            throw new UsernameNotFoundException("User not found");
+            throw new NotFoundException("User not found");
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
@@ -107,6 +108,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Iterable<UserEntity> list() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDto deactivate(String userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        userEntity.setIsActive(false);
+
+        return ModelUtils.mapper(userEntity, UserDto.class);
     }
 
     @Override
