@@ -42,7 +42,6 @@ public class ProductServiceImpl implements ProductService {
         return productEntities.stream()
                 .map(entity -> ModelUtils.mapper(entity, ProductResponse.class))
                 .toList();
-//                .collect(Collectors.toList());
     }
 
 
@@ -53,7 +52,6 @@ public class ProductServiceImpl implements ProductService {
 
         return ModelUtils.mapper(productEntity, ProductResponse.class);
     }
-
 
     @Override
     public ProductResponse update(ProductRequestUpdate product) {

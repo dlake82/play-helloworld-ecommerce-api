@@ -4,6 +4,7 @@ import com.saysimple.products.service.ProductService;
 import com.saysimple.products.vo.ProductRequest;
 import com.saysimple.products.vo.ProductRequestUpdate;
 import com.saysimple.products.vo.ProductResponse;
+import feign.Response;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
