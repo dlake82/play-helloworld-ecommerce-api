@@ -17,7 +17,7 @@ public class ProductEntity implements Serializable {
     @Column(nullable = false, length = 50)
     private String name;
     @Column(nullable = false, length = 50)
-    private String category;
+    private String categoryId;
 //    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
 //    @JoinColumn(name = "option_id")
 //    private List<OptionEntity> options = new ArrayList<>();

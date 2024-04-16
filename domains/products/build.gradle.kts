@@ -43,6 +43,7 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:2.7.3")
     implementation("org.springframework.hateoas:spring-hateoas")
     runtimeOnly("com.h2database:h2")
+    implementation("org.modelmapper:modelmapper:2.4.4")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

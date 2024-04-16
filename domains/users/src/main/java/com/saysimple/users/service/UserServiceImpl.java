@@ -71,15 +71,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) throws NotFoundException {
-        UserEntity userEntity = ModelUtils.strictMapper(userDto, UserEntity.class);
+        UserEntity userEntity = ModelUtils.strictMap(userDto, UserEntity.class);
 
         userEntity.setUserId(UUID.randomUUID().toString());
         userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
         userEntity.setIsActive(true);
 
-        try{
-            return ModelUtils.strictMapper(userRepository.save(userEntity), UserDto.class);
-        }catch(Exception e){
+        try {
+            return ModelUtils.strictMap(userRepository.save(userEntity), UserDto.class);
+        } catch (Exception e) {
             throw new NotFoundException("User already exists");
         }
     }
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByUserId(userId);
         userEntity.setIsActive(false);
 
-        return ModelUtils.mapper(userEntity, UserDto.class);
+        return ModelUtils.map(userEntity, UserDto.class);
     }
 
     @Override

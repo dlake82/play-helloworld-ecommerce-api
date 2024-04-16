@@ -49,9 +49,9 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> create(@RequestBody RequestUser user) throws NotFoundException {
-        UserDto userDto = ModelUtils.strictMapper(user, UserDto.class);
+        UserDto userDto = ModelUtils.strictMap(user, UserDto.class);
 
-        ResponseUser responseUser = ModelUtils.strictMapper(userService.create(userDto), ResponseUser.class);
+        ResponseUser responseUser = ModelUtils.strictMap(userService.create(userDto), ResponseUser.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }

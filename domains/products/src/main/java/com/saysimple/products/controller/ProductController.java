@@ -4,7 +4,6 @@ import com.saysimple.products.service.ProductService;
 import com.saysimple.products.vo.ProductRequest;
 import com.saysimple.products.vo.ProductRequestUpdate;
 import com.saysimple.products.vo.ProductResponse;
-import feign.Response;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -51,8 +50,8 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.get(productId));
     }
 
-    @PutMapping("/{productId}")
-    public ResponseEntity<ProductResponse> update(@PathVariable("productId") ProductRequestUpdate product) {
+    @PutMapping("/products")
+    public ResponseEntity<ProductResponse> update(@RequestBody ProductRequestUpdate product) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(product));
     }
 

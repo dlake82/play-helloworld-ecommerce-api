@@ -28,11 +28,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse create(ProductRequest product) {
-        ProductEntity productEntity = ModelUtils.mapper(product, ProductEntity.class);
+        log.info("{}", product);
+        ProductEntity productEntity = ModelUtils.strictMap(product, ProductEntity.class);
+
+
         productEntity.setProductId(UUID.randomUUID().toString());
+
+        log.info("{}", productEntity);
         productRepository.save(productEntity);
 
-        return ModelUtils.mapper(productEntity, ProductResponse.class);
+        return ModelUtils.map(productEntity, ProductResponse.class);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductEntity> productEntities = (List<ProductEntity>) productRepository.findAll();
 
         return productEntities.stream()
-                .map(entity -> ModelUtils.mapper(entity, ProductResponse.class))
+                .map(entity -> ModelUtils.map(entity, ProductResponse.class))
                 .toList();
     }
 
@@ -50,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = productRepository.findByProductId(productId).orElseThrow(() ->
                 new NotFoundException("Product not found"));
 
-        return ModelUtils.mapper(productEntity, ProductResponse.class);
+        return ModelUtils.map(productEntity, ProductResponse.class);
     }
 
     @Override
@@ -59,9 +64,9 @@ public class ProductServiceImpl implements ProductService {
                 new NotFoundException("Product not found"));
 
         productEntity.setName(product.getName());
-        productEntity.setCategory(product.getCategory());
+        productEntity.setCategoryId(product.getCategoryId());
 
-        return ModelUtils.mapper(productEntity, ProductResponse.class);
+        return ModelUtils.map(productEntity, ProductResponse.class);
     }
 
     @Override

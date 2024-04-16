@@ -9,5 +9,6 @@ public class ProductResponse {
     private Long id;
     private String productId;
     private String name;
-    private Integer category;
+    private String categoryId;
+    private String categoryName;
 }
