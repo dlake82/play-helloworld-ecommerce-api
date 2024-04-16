@@ -28,4 +28,4 @@ Decosk는 Deco + Desk의 합성어로, Deco(꾸미다)와 Desk(책상)의 합성
 
 # License
 
-MIT License.
+Apache-2.0 license.
