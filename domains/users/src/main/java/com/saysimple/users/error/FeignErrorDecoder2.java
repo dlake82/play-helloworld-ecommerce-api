@@ -19,7 +19,7 @@ public class FeignErrorDecoder2 implements ErrorDecoder {
 
     @Override
     public Exception decode(String methodKey, Response response) {
-        switch(response.status()) {
+        switch (response.status()) {
             case 400:
                 break;
             case 404:

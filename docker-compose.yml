@@ -62,7 +62,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
       - '49092:49092'
-      
+
   mariadb:
     container_name: mariadb
     image: 'mariadb:latest'
@@ -72,7 +72,7 @@ services:
       MYSQL_ROOT_PASSWORD: mariadb
       MYSQL_DATABASE: mydb
       MYSQL_USER: test
-      MYSQL_PASSWORD: test1234
+      MYSQL_PASSWORD: test
     volumes:
       - ./infras/mariadb/data:/var/lib/mysql
     networks:

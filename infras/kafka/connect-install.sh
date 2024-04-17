@@ -10,7 +10,7 @@ ORDER_SOURCE_CONNECT=decosk-order-source-connect
 ORDER_SINK_CONNECT=decosk-order-sink-connect
 
 # Delete the connectors
-./kafka/connect-delete.sh
+./connect-delete.sh
 
 # echo '
 # {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name="orders", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "orders", configuration = FeignErrorDecoder.class)
 public interface OrderServiceClient {
 
     @GetMapping("/orders/{userId}/orders")

@@ -37,6 +37,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public AuthenticationFilter(AuthenticationManager authenticationManager,
                                 UserService userService, Environment environment) {
         super(authenticationManager);
+        log.info("AuthenticationFilter");
         this.userService = userService;
         this.environment = environment;
     }
@@ -45,7 +46,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {
         try {
-
+            log.info("attemptAuthentication");
             RequestLogin creds = new ObjectMapper().readValue(req.getInputStream(), RequestLogin.class);
 
             return getAuthenticationManager().authenticate(
@@ -59,7 +60,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-
+        log.info("successfulAuthentication");
         String userName = ((User) auth.getPrincipal()).getUsername();
         UserDto userDetails = userService.getByEmail(userName);
 
@@ -79,5 +80,4 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         res.addHeader(HttpHeaders.AUTHORIZATION, token);
         res.addHeader("userId", userDetails.getUserId());
     }
-
 }

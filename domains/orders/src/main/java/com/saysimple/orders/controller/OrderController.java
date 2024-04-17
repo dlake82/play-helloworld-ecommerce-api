@@ -9,7 +9,7 @@ import com.saysimple.orders.vo.RequestOrder;
 import com.saysimple.orders.vo.ResponseOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
+import org.saysimple.utils.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
@@ -50,28 +49,12 @@ public class OrderController {
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId,
                                                      @RequestBody RequestOrder orderDetails) {
-        log.info("Before add orders data");
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        OrderDto orderDto = mapper.map(orderDetails, OrderDto.class);
+        OrderDto orderDto = ModelUtils.strictMap(orderDetails, OrderDto.class);
         orderDto.setUserId(userId);
-        /* jpa */
-        OrderDto createdOrder = orderService.createOrder(orderDto);
-        ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
 
-        /* kafka */
-        orderDto.setOrderId(UUID.randomUUID().toString());
-        orderDto.setTotalPrice(orderDetails.getQty() * orderDetails.getUnitPrice());
+        orderProducer.send("orders", orderDto);
 
-        /* send this order to the kafka */
-        kafkaProducer.send("example-catalog-topic", orderDto);
-
-//        orderProducer.send("orders", orderDto);
-//        ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
-
-        log.info("After added orders data");
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ModelUtils.strictMap(orderDetails, ResponseOrder.class));
     }
 
     @GetMapping("/{userId}/orders")
@@ -91,7 +74,7 @@ public class OrderController {
                 Thread.sleep(10000);
                 throw new Exception("장애 발생");
             }
-        } catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             log.warn(ex.getMessage());
         }
 

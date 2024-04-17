@@ -26,13 +26,12 @@ import java.util.function.Supplier;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private UserService userService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private Environment env;
-
     public static final String ALLOWED_IP_ADDRESS = "127.0.0.1";
     public static final String SUBNET = "/32";
     public static final IpAddressMatcher ALLOWED_IP_ADDRESS_MATCHER = new IpAddressMatcher(ALLOWED_IP_ADDRESS + SUBNET);
+    private final UserService userService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Environment env;
 
     public SecurityConfig(Environment env, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.env = env;
@@ -51,13 +50,14 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/health-check")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
 //                        .requestMatchers("/**").access(this::hasIpAddress)
-                        .requestMatchers("/**").access(
-                                new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1') or hasIpAddress('172.30.1.48')"))
-                        .anyRequest().authenticated()
+                                .requestMatchers("/**").access(
+                                        new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1') or hasIpAddress('172.30.1.48')"))
+                                .anyRequest().permitAll()
                 )
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session

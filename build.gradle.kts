@@ -39,7 +39,4 @@ allprojects {
 }
 
 subprojects {
-    dependencies {
-
-    }
 }

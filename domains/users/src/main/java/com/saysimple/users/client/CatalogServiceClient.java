@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@FeignClient(name="catalogs", configuration = FeignErrorDecoder2.class)
+@FeignClient(name = "catalogs", configuration = FeignErrorDecoder2.class)
 public interface CatalogServiceClient {
 
     @GetMapping("/catalogs/getCatalogs_wrong")
