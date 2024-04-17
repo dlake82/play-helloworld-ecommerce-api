@@ -95,6 +95,11 @@ spring:
           predicates:
             - Path=/products/**
 
+        - id: reviews
+          uri: lb://REVIEWS
+          predicates:
+            - Path=/reviews/**
+
 management:
   endpoints:
     web:

@@ -1,4 +1,5 @@
 rootProject.name = "decosk"
+
 include("gateway:gateway")
 include("gateway:discovery")
 
@@ -10,10 +11,9 @@ include("domains:orders")
 //include("domains:favorites")
 //include("domains:histories")
 //include("domains:payments")
-//include("domains:reviews")
+include("domains:reviews")
 //include("domains:supports")
 include("common")
-
 include("configs")
 
 //pluginManagement {
