@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/products")
 public class ProductController {
     private final Environment env;
     private final ProductService productService;
@@ -35,12 +35,12 @@ public class ProductController {
                 + ", token expiration time=" + env.getProperty("token.expiration_time"));
     }
 
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest product) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(product));
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity<List<ProductResponse>> list() {
         return ResponseEntity.status(HttpStatus.OK).body(productService.list());
     }
@@ -50,7 +50,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.get(productId));
     }
 
-    @PutMapping("/products")
+    @PutMapping
     public ResponseEntity<ProductResponse> update(@RequestBody ProductRequestUpdate product) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(product));
     }

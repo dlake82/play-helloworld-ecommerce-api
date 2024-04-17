@@ -1,10 +1,10 @@
 package com.saysimple.products.repository;
 
-import com.saysimple.products.entity.ProductEntity;
+import com.saysimple.products.entity.Product;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface ProductRepository extends CrudRepository<ProductEntity, Long> {
-    Optional<ProductEntity> findByProductId(String productId);
+public interface ProductRepository extends CrudRepository<Product, Long> {
+    Optional<Product> findByProductId(String productId);
 }

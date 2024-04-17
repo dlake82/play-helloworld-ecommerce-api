@@ -1,7 +1,7 @@
 package com.saysimple.users.service;
 
 import com.saysimple.users.dto.UserDto;
-import com.saysimple.users.entity.UserEntity;
+import com.saysimple.users.entity.User;
 import com.saysimple.users.error.exception.NotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -10,7 +10,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto get(String userId) throws NotFoundException;
 
-    Iterable<UserEntity> list();
+    Iterable<User> list();
 
     UserDto deactivate(String userId);
 

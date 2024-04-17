@@ -1,6 +1,6 @@
 package com.saysimple.products.service;
 
-import com.saysimple.products.entity.ProductEntity;
+import com.saysimple.products.entity.Product;
 import com.saysimple.products.repository.ProductRepository;
 import com.saysimple.products.vo.ProductRequest;
 import com.saysimple.products.vo.ProductRequestUpdate;
@@ -28,13 +28,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse create(ProductRequest product) {
-        log.info("{}", product);
-        ProductEntity productEntity = ModelUtils.strictMap(product, ProductEntity.class);
-
+        Product productEntity = ModelUtils.strictMap(product, Product.class);
 
         productEntity.setProductId(UUID.randomUUID().toString());
-
-        log.info("{}", productEntity);
         productRepository.save(productEntity);
 
         return ModelUtils.map(productEntity, ProductResponse.class);
@@ -42,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> list() {
-        List<ProductEntity> productEntities = (List<ProductEntity>) productRepository.findAll();
+        List<Product> productEntities = (List<Product>) productRepository.findAll();
 
         return productEntities.stream()
                 .map(entity -> ModelUtils.map(entity, ProductResponse.class))
@@ -52,28 +48,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse get(String productId) {
-        ProductEntity productEntity = productRepository.findByProductId(productId).orElseThrow(() ->
+        Product product = productRepository.findByProductId(productId).orElseThrow(() ->
                 new NotFoundException("Product not found"));
 
-        return ModelUtils.map(productEntity, ProductResponse.class);
+        return ModelUtils.map(product, ProductResponse.class);
     }
 
     @Override
     public ProductResponse update(ProductRequestUpdate product) {
-        ProductEntity productEntity = productRepository.findByProductId(product.getProductId()).orElseThrow(() ->
+        Product productEntity = productRepository.findByProductId(product.getProductId()).orElseThrow(() ->
                 new NotFoundException("Product not found"));
 
         productEntity.setName(product.getName());
         productEntity.setCategoryId(product.getCategoryId());
+        productRepository.save(productEntity);
 
         return ModelUtils.map(productEntity, ProductResponse.class);
     }
 
     @Override
     public void delete(String productId) {
-        ProductEntity productEntity = productRepository.findByProductId(productId).orElseThrow(() ->
+        Product product = productRepository.findByProductId(productId).orElseThrow(() ->
                 new NotFoundException("Product not found"));
 
-        productRepository.delete(productEntity);
+        productRepository.delete(product);
     }
 }

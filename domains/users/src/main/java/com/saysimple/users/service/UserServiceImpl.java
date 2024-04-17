@@ -3,7 +3,7 @@ package com.saysimple.users.service;
 import com.saysimple.users.client.CatalogServiceClient;
 import com.saysimple.users.client.OrderServiceClient;
 import com.saysimple.users.dto.UserDto;
-import com.saysimple.users.entity.UserEntity;
+import com.saysimple.users.entity.User;
 import com.saysimple.users.error.exception.NotFoundException;
 import com.saysimple.users.repository.UserRepository;
 import com.saysimple.users.vo.ResponseOrder;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -59,26 +58,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username);
+        User user = userRepository.findByEmail(username);
 
-        if (userEntity == null)
+        if (user == null)
             throw new UsernameNotFoundException(username + ": not found");
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPwd(),
                 true, true, true, true,
                 new ArrayList<>());
     }
 
     @Override
     public UserDto create(UserDto userDto) throws NotFoundException {
-        UserEntity userEntity = ModelUtils.strictMap(userDto, UserEntity.class);
+        User user = ModelUtils.strictMap(userDto, User.class);
 
-        userEntity.setUserId(UUID.randomUUID().toString());
-        userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
-        userEntity.setIsActive(true);
+        user.setUserId(UUID.randomUUID().toString());
+        user.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
+        user.setIsActive(true);
 
         try {
-            return ModelUtils.strictMap(userRepository.save(userEntity), UserDto.class);
+            return ModelUtils.strictMap(userRepository.save(user), UserDto.class);
         } catch (Exception e) {
             throw new NotFoundException("User already exists");
         }
@@ -86,14 +85,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto get(String userId) throws NotFoundException {
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        log.info("UserEntity {}", userEntity);
+        log.info("UserEntity {}", user);
 
-        if (userEntity == null)
+        if (user == null)
             throw new NotFoundException("User not found");
 
-        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
+        UserDto userDto = new ModelMapper().map(user, UserDto.class);
 
         log.info("Before call orders microservice");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker1");
@@ -106,28 +105,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Iterable<UserEntity> list() {
+    public Iterable<User> list() {
         return userRepository.findAll();
     }
 
     @Override
     public UserDto deactivate(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
-        userEntity.setIsActive(false);
+        User user = userRepository.findByUserId(userId);
+        user.setIsActive(false);
 
-        return ModelUtils.map(userEntity, UserDto.class);
+        return ModelUtils.map(user, UserDto.class);
     }
 
     @Override
     public UserDto getByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
-        if (userEntity == null)
+        User user = userRepository.findByEmail(email);
+        if (user == null)
             throw new UsernameNotFoundException(email);
 
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        UserDto userDto = mapper.map(userEntity, UserDto.class);
+        UserDto userDto = mapper.map(user, UserDto.class);
         return userDto;
     }
 }

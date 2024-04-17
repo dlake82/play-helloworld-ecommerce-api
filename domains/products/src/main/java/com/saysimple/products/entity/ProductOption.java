@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "\"option\"")
-public class OptionEntity implements Serializable {
+@Table(name = "product_option")
+public class ProductOption implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

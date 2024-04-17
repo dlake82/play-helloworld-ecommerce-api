@@ -1,10 +1,10 @@
 package com.saysimple.users.repository;
 
-import com.saysimple.users.entity.UserEntity;
+import com.saysimple.users.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<UserEntity, Long> {
-    UserEntity findByUserId(String userId);
+public interface UserRepository extends CrudRepository<User, Long> {
+    User findByUserId(String userId);
 
-    UserEntity findByEmail(String username);
+    User findByEmail(String username);
 }

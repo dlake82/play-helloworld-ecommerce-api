@@ -1,7 +1,7 @@
 package com.saysimple.users.controller;
 
 import com.saysimple.users.dto.UserDto;
-import com.saysimple.users.entity.UserEntity;
+import com.saysimple.users.entity.User;
 import com.saysimple.users.error.exception.NotFoundException;
 import com.saysimple.users.service.UserService;
 import com.saysimple.users.vo.RequestUser;
@@ -58,7 +58,7 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> list() {
-        Iterable<UserEntity> userList = userService.list();
+        Iterable<User> userList = userService.list();
 
         List<ResponseUser> result = new ArrayList<>();
         userList.forEach(v -> {
@@ -89,9 +89,9 @@ public class UserController {
     @GetMapping("/users/hateoas")
     public ResponseEntity<CollectionModel<EntityModel<ResponseUser>>> getWithHateoas() throws NotFoundException {
         List<EntityModel<ResponseUser>> result = new ArrayList<>();
-        Iterable<UserEntity> users = userService.list();
+        Iterable<User> users = userService.list();
 
-        for (UserEntity user : users) {
+        for (User user : users) {
             EntityModel entityModel = EntityModel.of(user);
             entityModel.add(linkTo(methodOn(this.getClass()).get(user.getUserId())).withSelfRel());
 
