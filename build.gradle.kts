@@ -37,6 +37,3 @@ allprojects {
         useJUnitPlatform()
     }
 }
-
-subprojects {
-}

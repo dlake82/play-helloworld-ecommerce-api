@@ -3,10 +3,19 @@ plugins {
 }
 
 subprojects {
+    group = "com.saysimple"
+    version = "1.0.0"
+
+    repositories {
+        mavenCentral()
+    }
+
     apply(plugin = "java")
 
     dependencies {
-        implementation(project(":common"))
-        implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }

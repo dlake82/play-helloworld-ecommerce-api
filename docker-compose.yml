@@ -104,3 +104,24 @@ services:
       - '8083:8083'
     volumes:
       - ./infras/kafka/jars:/etc/kafka-connect/jars
+
+  axonserver:
+    container_name: axonserver
+    image: axoniq/axonserver
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    volumes:
+      - ./infras/axonserver/config:/axonserver/config
+      - ./infras/axonserver/events:/axonserver/events
+      - ./infras/axonserver/exts:/axonserver/exts
+      - ./infras/axonserver/log:/axonserver/log
+      - ./infras/axonserver/plugins:/axonserver/plugins
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./infras/mongodb/data:/data/db

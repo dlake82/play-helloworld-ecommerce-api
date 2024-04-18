@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.axonframework.extensions.mongo:axon-mongo")
     implementation("io.projectreactor:reactor-core:3.6.0")
+    implementation("io.projectreactor.addons:reactor-extra")
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.axonframework:axon-test")

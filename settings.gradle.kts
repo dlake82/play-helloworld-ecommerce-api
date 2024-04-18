@@ -1,17 +1,18 @@
 rootProject.name = "decosk"
 
+include("common")
+include("configs")
+include("domains")
+include(":common", ":domains", ":domains:orders")
 include("gateway:gateway")
 include("gateway:discovery")
-
-include("domains")
 include("domains:users")
 include("domains:products")
 include("domains:catalogs")
 include("domains:orders")
 include("domains:reviews")
 include("domains:cqrs")
-include("common")
-include("configs")
+
 
 //pluginManagement {
 //    val SPRING_BOOT_VERSION: String by settings
