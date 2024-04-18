@@ -13,7 +13,7 @@ Decosk는 Deco + Desk의 합성어로, Deco(꾸미다)와 Desk(책상)의 합성
 ```
 ./insatll.sh
 ```
-- docker-compose 인프라 구축 (쿠버네티스로 이동 예정)
+- docker-compose 로컬 인프라 구축
 - 카프카 커넥터 플러그인 다운로드 및 설치
 
 # Specification
@@ -43,6 +43,23 @@ Decosk는 Deco + Desk의 합성어로, Deco(꾸미다)와 Desk(책상)의 합성
 - Coupon
 
 ## API Specification
+
+- User
+  - login
+  - signup
+  - modify
+  - withdraw
+- Catalog
+- Order
+- Return
+- Event
+- Recommend
+- Filter
+- Category
+- Advertisement
+- Coupon
+
+## Directory Structure
 
 - User
   - login
