@@ -20,7 +20,7 @@ Decosk는 Deco + Desk의 합성어로, Deco(꾸미다)와 Desk(책상)의 합성
 
 ## Wireframe
 
-- 미로로 작성됨
+- 미로로 작성
 - Feature-Driven 기반으로 설계
 - 각 프레임과 설명, 그리고 서비스 플로우 차트로 구성됨
 - https://miro.com/app/board/uXjVKco0iCI=/?share_link_id=247911919290 
