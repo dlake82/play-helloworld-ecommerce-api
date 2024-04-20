@@ -50,8 +50,8 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductAddedEvent event) {
-        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
-            order.addProduct(event.productId());
+        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
+            order.addProduct(event.getProductId());
             emitUpdate(order);
             return order;
         });
@@ -68,8 +68,8 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductCountDecrementedEvent event) {
-        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
-            order.decrementProductInstance(event.productId());
+        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
+            order.decrementProductInstance(event.getProductId());
             emitUpdate(order);
             return order;
         });
@@ -86,7 +86,7 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
+        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
             order.setOrderConfirmed();
             emitUpdate(order);
             return order;
@@ -95,7 +95,7 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
+        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
             order.setOrderShipped();
             emitUpdate(order);
             return order;
@@ -119,19 +119,19 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
           .stream()
           .filter(o -> o.getOrderStatus() == OrderStatus.SHIPPED)
           .map(o -> Optional.ofNullable(o.getProducts()
-              .get(query.getProductId()))
+              .get(query.productId()))
             .orElse(0))
           .reduce(0, Integer::sum);
     }
 
     @QueryHandler
     public Order handle(OrderUpdatesQuery query) {
-        return orders.get(query.getOrderId());
+        return orders.get(query.orderId());
     }
 
     private void emitUpdate(Order order) {
         emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-          .equals(q.getOrderId()), order);
+          .equals(q.orderId()), order);
     }
 
     @Override

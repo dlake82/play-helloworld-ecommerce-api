@@ -1,10 +1,14 @@
 package com.saysimple.axon.coreapi.commands;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 @Getter
-public record DecrementProductCountCommand(@TargetAggregateIdentifier String orderId, String productId) {
+@AllArgsConstructor
+public class DecrementProductCountCommand {
+    private @TargetAggregateIdentifier String orderId;
+    private String productId;
 
     @Override
     public String toString() {

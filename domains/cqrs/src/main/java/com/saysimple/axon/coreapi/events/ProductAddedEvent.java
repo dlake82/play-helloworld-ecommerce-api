@@ -1,9 +1,14 @@
 package com.saysimple.axon.coreapi.events;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public record ProductAddedEvent(String orderId, String productId) {
+@AllArgsConstructor
+public class ProductAddedEvent {
+
+    private String orderId;
+    private String productId;
 
     @Override
     public String toString() {

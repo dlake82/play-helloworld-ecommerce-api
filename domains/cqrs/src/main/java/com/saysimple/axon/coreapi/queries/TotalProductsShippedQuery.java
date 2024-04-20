@@ -1,17 +1,8 @@
 package com.saysimple.axon.coreapi.queries;
 
-import lombok.Getter;
-
 import java.util.Objects;
 
-@Getter
-public class TotalProductsShippedQuery {
-
-    private final String productId;
-
-    public TotalProductsShippedQuery(String productId) {
-        this.productId = productId;
-    }
+public record TotalProductsShippedQuery(String productId) {
 
     public boolean equals(Object o) {
         if (this == o) {
@@ -22,11 +13,6 @@ public class TotalProductsShippedQuery {
         }
         TotalProductsShippedQuery that = (TotalProductsShippedQuery) o;
         return Objects.equals(productId, that.productId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(productId);
     }
 
     @Override

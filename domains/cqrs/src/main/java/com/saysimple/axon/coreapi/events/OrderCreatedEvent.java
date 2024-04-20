@@ -1,17 +1,14 @@
 package com.saysimple.axon.coreapi.events;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
 
 @Getter
+@AllArgsConstructor
 public class OrderCreatedEvent {
-
     private final String orderId;
-
-    public OrderCreatedEvent(String orderId) {
-        this.orderId = orderId;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -23,11 +20,6 @@ public class OrderCreatedEvent {
         }
         OrderCreatedEvent that = (OrderCreatedEvent) o;
         return Objects.equals(orderId, that.orderId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId);
     }
 
     @Override

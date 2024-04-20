@@ -23,7 +23,6 @@ repositories {
 
 dependencies {
     // lombok
-    compileOnly("org.projectlombok:lombok")
     implementation("org.axonframework:axon-spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -31,6 +30,8 @@ dependencies {
     implementation("org.axonframework.extensions.mongo:axon-mongo")
     implementation("io.projectreactor:reactor-core:3.6.0")
     implementation("io.projectreactor.addons:reactor-extra")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.axonframework:axon-test")

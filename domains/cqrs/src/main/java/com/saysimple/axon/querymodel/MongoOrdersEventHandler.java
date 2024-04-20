@@ -74,7 +74,7 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductAddedEvent event) {
-        update(event.orderId(), o -> o.addProduct(event.productId()));
+        update(event.getOrderId(), o -> o.addProduct(event.getProductId()));
     }
 
     @EventHandler
@@ -84,7 +84,7 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductCountDecrementedEvent event) {
-        update(event.orderId(), o -> o.decrementProductInstance(event.productId()));
+        update(event.getOrderId(), o -> o.decrementProductInstance(event.getProductId()));
     }
 
     @EventHandler
@@ -94,12 +94,12 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        update(event.orderId(), Order::setOrderConfirmed);
+        update(event.getOrderId(), Order::setOrderConfirmed);
     }
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        update(event.orderId(), Order::setOrderShipped);
+        update(event.getOrderId(), Order::setOrderShipped);
     }
 
     @QueryHandler
@@ -119,16 +119,16 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
     @QueryHandler
     public Integer handle(TotalProductsShippedQuery query) {
         AtomicInteger result = new AtomicInteger();
-        orders.find(shippedProductFilter(query.getProductId()))
+        orders.find(shippedProductFilter(query.productId()))
           .map(d -> d.get(PRODUCTS_PROPERTY_NAME, Document.class))
-          .map(d -> d.getInteger(query.getProductId(), 0))
+          .map(d -> d.getInteger(query.productId(), 0))
           .forEach(result::addAndGet);
         return result.get();
     }
 
     @QueryHandler
     public Order handle(OrderUpdatesQuery query) {
-        return getOrder(query.getOrderId()).orElse(null);
+        return getOrder(query.orderId()).orElse(null);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     private Order emitUpdate(Order order) {
         emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-          .equals(q.getOrderId()), order);
+          .equals(q.orderId()), order);
         return order;
     }
 

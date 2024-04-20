@@ -1,13 +1,13 @@
 package com.saysimple.reviews.service;
 
+import com.saysimple.reviews.aop.ReviewErrorEnum;
 import com.saysimple.reviews.entity.Review;
-import com.saysimple.reviews.error.ErrorEnum;
 import com.saysimple.reviews.repository.ReviewRepository;
 import com.saysimple.reviews.vo.ReviewRequest;
 import com.saysimple.reviews.vo.ReviewRequestUpdate;
 import com.saysimple.reviews.vo.ReviewResponse;
 import lombok.extern.slf4j.Slf4j;
-import com.saysimple.reviews.aop.exception.NotFoundException;
+import org.saysimple.aop.exception.NotFoundException;
 import org.saysimple.utils.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse get(String reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId).orElseThrow(() ->
-                new NotFoundException(ErrorEnum.ReviewNotFound.getMessagePro()));
+                new NotFoundException(ReviewErrorEnum.REVIEW_NOT_FOUND.getMsg()));
 
         return ModelUtils.map(review, ReviewResponse.class);
     }
@@ -56,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse update(ReviewRequestUpdate review) {
         Review reviewEntity = reviewRepository.findByReviewId(review.getProductId()).orElseThrow(() ->
-                new NotFoundException(ErrorEnum.ReviewNotFound.getMessage()));
+                new NotFoundException(ReviewErrorEnum.REVIEW_NOT_FOUND.getMsg()));
 
         reviewEntity.setProductId(review.getProductId());
         reviewEntity.setCategoryId(review.getCategoryId());
@@ -73,7 +73,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void delete(String reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId).orElseThrow(() ->
-                new NotFoundException(ErrorEnum.ReviewNotFound.getMessage()));
+                new NotFoundException(ReviewErrorEnum.REVIEW_NOT_FOUND.getMsg()));
 
         reviewRepository.delete(review);
     }

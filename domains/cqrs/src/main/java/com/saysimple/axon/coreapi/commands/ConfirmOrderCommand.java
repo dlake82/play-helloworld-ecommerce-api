@@ -1,12 +1,15 @@
 package com.saysimple.axon.coreapi.commands;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import java.util.Objects;
 
 @Getter
-public record ConfirmOrderCommand(@TargetAggregateIdentifier String orderId) {
+@AllArgsConstructor
+public class ConfirmOrderCommand {
+    private @TargetAggregateIdentifier String orderId;
 
     @Override
     public boolean equals(Object obj) {

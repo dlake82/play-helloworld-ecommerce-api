@@ -1,17 +1,8 @@
 package com.saysimple.axon.coreapi.queries;
 
-import lombok.Getter;
-
 import java.util.Objects;
 
-@Getter
-public class OrderUpdatesQuery {
-
-    private final String orderId;
-
-    public OrderUpdatesQuery(String orderId) {
-        this.orderId = orderId;
-    }
+public record OrderUpdatesQuery(String orderId) {
 
     public boolean equals(Object o) {
         if (this == o) {
@@ -22,11 +13,6 @@ public class OrderUpdatesQuery {
         }
         OrderUpdatesQuery that = (OrderUpdatesQuery) o;
         return Objects.equals(orderId, that.orderId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId);
     }
 
     @Override

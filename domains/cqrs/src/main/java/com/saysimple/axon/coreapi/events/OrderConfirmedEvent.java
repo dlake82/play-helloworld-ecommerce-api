@@ -1,11 +1,14 @@
 package com.saysimple.axon.coreapi.events;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
 
 @Getter
-public record OrderConfirmedEvent(String orderId) {
+@AllArgsConstructor
+public class OrderConfirmedEvent {
+    private final String orderId;
 
     @Override
     public boolean equals(Object obj) {
@@ -16,7 +19,7 @@ public record OrderConfirmedEvent(String orderId) {
             return false;
         }
         final OrderConfirmedEvent other = (OrderConfirmedEvent) obj;
-        return Objects.equals(this.orderId, other.orderId);
+        return Objects.equals(orderId, other.orderId);
     }
 
     @Override

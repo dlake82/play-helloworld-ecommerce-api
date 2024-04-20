@@ -13,6 +13,7 @@ subprojects {
     apply(plugin = "java")
 
     dependencies {
+        implementation(project(":common"))
     }
 
     tasks.withType<Test> {
