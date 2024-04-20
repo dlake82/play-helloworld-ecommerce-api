@@ -1,10 +1,11 @@
 package com.saysimple.products.service;
 
+import com.saysimple.products.aop.ProductError;
 import com.saysimple.products.entity.Product;
 import com.saysimple.products.repository.ProductRepository;
 import com.saysimple.products.vo.ProductRequest;
-import com.saysimple.products.vo.ProductRequestUpdate;
 import com.saysimple.products.vo.ProductResponse;
+import com.saysimple.products.vo.ProductUpdateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.saysimple.aop.exception.NotFoundException;
 import org.saysimple.utils.ModelUtils;
@@ -49,15 +50,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse get(String productId) {
         Product product = productRepository.findByProductId(productId).orElseThrow(() ->
-                new NotFoundException("Product not found"));
+                new NotFoundException(ProductError.ProductNotFound.getMsg()));
 
         return ModelUtils.map(product, ProductResponse.class);
     }
 
     @Override
-    public ProductResponse update(ProductRequestUpdate product) {
+    public ProductResponse update(ProductUpdateRequest product) {
         Product productEntity = productRepository.findByProductId(product.getProductId()).orElseThrow(() ->
-                new NotFoundException("Product not found"));
+                new NotFoundException(ProductError.ProductNotFound.getMsg()));
 
         productEntity.setName(product.getName());
         productEntity.setCategoryId(product.getCategoryId());
@@ -69,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(String productId) {
         Product product = productRepository.findByProductId(productId).orElseThrow(() ->
-                new NotFoundException("Product not found"));
+                new NotFoundException(ProductError.ProductNotFound.getMsg()));
 
         productRepository.delete(product);
     }

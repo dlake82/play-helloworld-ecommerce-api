@@ -1,17 +1,16 @@
 package com.saysimple.axon.coreapi.queries;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
 public class OrderUpdatesQuery {
 
     private final String orderId;
 
     public OrderUpdatesQuery(String orderId) {
         this.orderId = orderId;
-    }
-
-    public String getOrderId() {
-        return orderId;
     }
 
     public boolean equals(Object o) {

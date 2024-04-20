@@ -50,8 +50,8 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductAddedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.addProduct(event.getProductId());
+        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
+            order.addProduct(event.productId());
             emitUpdate(order);
             return order;
         });
@@ -68,8 +68,8 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductCountDecrementedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.decrementProductInstance(event.getProductId());
+        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
+            order.decrementProductInstance(event.productId());
             emitUpdate(order);
             return order;
         });
@@ -86,7 +86,7 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
+        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
             order.setOrderConfirmed();
             emitUpdate(order);
             return order;
@@ -95,7 +95,7 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
+        orders.computeIfPresent(event.orderId(), (orderId, order) -> {
             order.setOrderShipped();
             emitUpdate(order);
             return order;

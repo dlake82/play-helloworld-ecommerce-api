@@ -31,22 +31,22 @@ public class OrderLine {
     @CommandHandler
     public void handle(IncrementProductCountCommand command) {
         if (orderConfirmed) {
-            throw new OrderAlreadyConfirmedException(command.getOrderId());
+            throw new OrderAlreadyConfirmedException(command.orderId());
         }
 
-        apply(new ProductCountIncrementedEvent(command.getOrderId(), productId));
+        apply(new ProductCountIncrementedEvent(command.orderId(), productId));
     }
 
     @CommandHandler
     public void handle(DecrementProductCountCommand command) {
         if (orderConfirmed) {
-            throw new OrderAlreadyConfirmedException(command.getOrderId());
+            throw new OrderAlreadyConfirmedException(command.orderId());
         }
 
         if (count <= 1) {
-            apply(new ProductRemovedEvent(command.getOrderId(), productId));
+            apply(new ProductRemovedEvent(command.orderId(), productId));
         } else {
-            apply(new ProductCountDecrementedEvent(command.getOrderId(), productId));
+            apply(new ProductCountDecrementedEvent(command.orderId(), productId));
         }
     }
 

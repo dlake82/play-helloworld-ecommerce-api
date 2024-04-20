@@ -36,7 +36,7 @@ public class OrderAggregate {
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
-        apply(new OrderCreatedEvent(command.getOrderId()));
+        apply(new OrderCreatedEvent(command.orderId()));
     }
 
     @CommandHandler
@@ -45,7 +45,7 @@ public class OrderAggregate {
             throw new OrderAlreadyConfirmedException(orderId);
         }
 
-        String productId = command.getProductId();
+        String productId = command.productId();
         if (orderLines.containsKey(productId)) {
             throw new DuplicateOrderLineException(productId);
         }
@@ -84,7 +84,7 @@ public class OrderAggregate {
 
     @EventSourcingHandler
     public void on(ProductAddedEvent event) {
-        String productId = event.getProductId();
+        String productId = event.productId();
         this.orderLines.put(productId, new OrderLine(productId));
     }
 

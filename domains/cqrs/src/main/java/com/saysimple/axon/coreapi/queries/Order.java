@@ -1,9 +1,12 @@
 package com.saysimple.axon.coreapi.queries;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Getter
 public class Order {
 
     private final String orderId;
@@ -14,18 +17,6 @@ public class Order {
         this.orderId = orderId;
         this.products = new HashMap<>();
         orderStatus = OrderStatus.CREATED;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public Map<String, Integer> getProducts() {
-        return products;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
     }
 
     public void addProduct(String productId) {

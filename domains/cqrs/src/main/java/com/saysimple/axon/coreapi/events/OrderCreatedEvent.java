@@ -1,17 +1,16 @@
 package com.saysimple.axon.coreapi.events;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
 public class OrderCreatedEvent {
 
     private final String orderId;
 
     public OrderCreatedEvent(String orderId) {
         this.orderId = orderId;
-    }
-
-    public String getOrderId() {
-        return orderId;
     }
 
     @Override

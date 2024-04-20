@@ -74,7 +74,7 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductAddedEvent event) {
-        update(event.getOrderId(), o -> o.addProduct(event.getProductId()));
+        update(event.orderId(), o -> o.addProduct(event.productId()));
     }
 
     @EventHandler
@@ -84,7 +84,7 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(ProductCountDecrementedEvent event) {
-        update(event.getOrderId(), o -> o.decrementProductInstance(event.getProductId()));
+        update(event.orderId(), o -> o.decrementProductInstance(event.productId()));
     }
 
     @EventHandler
@@ -94,12 +94,12 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        update(event.getOrderId(), Order::setOrderConfirmed);
+        update(event.orderId(), Order::setOrderConfirmed);
     }
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        update(event.getOrderId(), Order::setOrderShipped);
+        update(event.orderId(), Order::setOrderShipped);
     }
 
     @QueryHandler

@@ -2,8 +2,8 @@ package com.saysimple.products.controller;
 
 import com.saysimple.products.service.ProductService;
 import com.saysimple.products.vo.ProductRequest;
-import com.saysimple.products.vo.ProductRequestUpdate;
 import com.saysimple.products.vo.ProductResponse;
+import com.saysimple.products.vo.ProductUpdateRequest;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -51,7 +51,7 @@ public class ProductController {
     }
 
     @PutMapping
-    public ResponseEntity<ProductResponse> update(@RequestBody ProductRequestUpdate product) {
+    public ResponseEntity<ProductResponse> update(@RequestBody ProductUpdateRequest product) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(product));
     }
 

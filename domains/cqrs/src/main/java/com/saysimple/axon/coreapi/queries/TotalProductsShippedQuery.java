@@ -1,17 +1,16 @@
 package com.saysimple.axon.coreapi.queries;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
 public class TotalProductsShippedQuery {
 
     private final String productId;
 
     public TotalProductsShippedQuery(String productId) {
         this.productId = productId;
-    }
-
-    public String getProductId() {
-        return productId;
     }
 
     public boolean equals(Object o) {

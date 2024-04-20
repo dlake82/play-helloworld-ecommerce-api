@@ -22,6 +22,8 @@ repositories {
 }
 
 dependencies {
+    // lombok
+    compileOnly("org.projectlombok:lombok")
     implementation("org.axonframework:axon-spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter-web")

@@ -7,7 +7,7 @@ import com.saysimple.reviews.vo.ReviewRequest;
 import com.saysimple.reviews.vo.ReviewRequestUpdate;
 import com.saysimple.reviews.vo.ReviewResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.saysimple.aop.exception.NotFoundException;
+import com.saysimple.reviews.aop.exception.NotFoundException;
 import org.saysimple.utils.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse get(String reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId).orElseThrow(() ->
-                new NotFoundException(ErrorEnum.ReviewNotFound.getMessage()));
+                new NotFoundException(ErrorEnum.ReviewNotFound.getMessagePro()));
 
         return ModelUtils.map(review, ReviewResponse.class);
     }
