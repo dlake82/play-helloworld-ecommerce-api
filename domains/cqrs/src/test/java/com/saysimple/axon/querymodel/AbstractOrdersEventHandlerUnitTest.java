@@ -65,9 +65,9 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     protected abstract OrdersEventHandler getHandler();
 
     @Test
+    @DisplayName("두 개의 주문을 초기화 한 후 모든 주문을 찾는 쿼리를 수행하면 두 개의 주문이 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenFindAllOrderedProductsQuery_thenCorrectOrdersAreReturned() {
         resetWithTwoOrders();
-
         List<Order> result = handler.handle(new FindAllOrderedProductsQuery());
 
         assertNotNull(result);
@@ -89,6 +89,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("두 개의 주문을 초기화 한 후 모든 주문을 찾는 쿼리를 스트리밍으로 수행하면 두 개의 주문이 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenFindAllOrderedProductsQueryStreaming_thenCorrectOrdersAreReturned() {
         resetWithTwoOrders();
         final Consumer<Order> orderVerifier = order -> {
@@ -111,11 +112,13 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문이 없는 경우 총 배송된 제품 쿼리를 수행하면 0이 반환된다.")
     void givenNoOrdersPlaced_whenTotalProductsShippedQuery_thenZeroReturned() {
         assertEquals(0, handler.handle(new TotalProductsShippedQuery(PRODUCT_ID_1)));
     }
 
     @Test
+    @DisplayName("두 개의 주문을 초기화 한 후 각 주문의 총 배송된 제품 쿼리를 수행하면 각 주문의 제품 수가 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenTotalProductsShippedQuery_thenOnlyCountProductsFirstOrder() {
         resetWithTwoOrders();
 
@@ -124,6 +127,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("두 개의 주문을 초기화 한 후 두 번째 주문에 대한 주문 배송 이벤트를 수행하면 두 번째 주문의 제품 수가 결과에 반영되어야 한다.")
     void givenTwoOrdersPlacedAndShipped_whenTotalProductsShippedQuery_thenCountBothOrders() {
         resetWithTwoOrders();
         handler.on(new OrderShippedEvent(ORDER_ID_2));
@@ -133,6 +137,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("1번 주문에 대한 주문 갱신 쿼리를 수행하면 1번 주문이 반환되고 3개의 제품이 포함되어야 한다.")
     void givenOrderExist_whenOrderUpdatesQuery_thenOrderReturned() {
         resetWithTwoOrders();
 
@@ -145,6 +150,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderExist_whenProductAddedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
 
@@ -154,6 +160,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 감소 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderWithProductExist_whenProductCountDecrementedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
@@ -165,6 +172,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 제거 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderWithProductExist_whenProductRemovedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
@@ -176,6 +184,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 증가 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderWithProductExist_whenProductCountIncrementedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
@@ -187,6 +196,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 주문 확인 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderWithProductExist_whenOrderConfirmedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
@@ -198,6 +208,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 주문 배송 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
     void givenOrderWithProductAndConfirmationExist_whenOrderShippedEvent_thenUpdateEmittedOnce() {
         handler.on(new OrderCreatedEvent(ORDER_ID_1));
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
