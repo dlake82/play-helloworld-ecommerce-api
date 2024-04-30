@@ -2,6 +2,8 @@ package com.saysimple.axon.querymodel;
 
 import com.mongodb.client.MongoClient;
 
+import com.saysimple.axon.handler.MongoOrdersEventHandler;
+import com.saysimple.axon.handler.OrdersEventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.DynamicPropertyRegistry;

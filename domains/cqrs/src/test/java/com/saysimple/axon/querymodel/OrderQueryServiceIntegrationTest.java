@@ -1,12 +1,16 @@
 package com.saysimple.axon.querymodel;
 
 import com.saysimple.axon.OrderApplication;
-import com.saysimple.axon.coreapi.events.OrderConfirmedEvent;
-import com.saysimple.axon.coreapi.events.OrderShippedEvent;
-import com.saysimple.axon.coreapi.events.ProductAddedEvent;
-import com.saysimple.axon.coreapi.events.ProductCountDecrementedEvent;
-import com.saysimple.axon.coreapi.events.ProductCountIncrementedEvent;
-import com.saysimple.axon.coreapi.queries.Order;
+import com.saysimple.axon.service.OrderQueryService;
+import com.saysimple.axon.vo.OrderResponse;
+import com.saysimple.axon.vo.OrderStatusResponse;
+import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.event.OrderConfirmedEvent;
+import com.saysimple.axon.model.event.OrderShippedEvent;
+import com.saysimple.axon.model.event.ProductAddedEvent;
+import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
+import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
+import com.saysimple.axon.model.query.Order;
 
 import org.axonframework.eventhandling.gateway.EventGateway;
 import org.junit.jupiter.api.*;

@@ -1,17 +1,18 @@
 package com.saysimple.axon.querymodel;
 
-import com.saysimple.axon.coreapi.events.OrderConfirmedEvent;
-import com.saysimple.axon.coreapi.events.OrderCreatedEvent;
-import com.saysimple.axon.coreapi.events.OrderShippedEvent;
-import com.saysimple.axon.coreapi.events.ProductAddedEvent;
-import com.saysimple.axon.coreapi.events.ProductCountDecrementedEvent;
-import com.saysimple.axon.coreapi.events.ProductCountIncrementedEvent;
-import com.saysimple.axon.coreapi.events.ProductRemovedEvent;
-import com.saysimple.axon.coreapi.queries.FindAllOrderedProductsQuery;
-import com.saysimple.axon.coreapi.queries.Order;
-import com.saysimple.axon.coreapi.queries.OrderStatus;
-import com.saysimple.axon.coreapi.queries.OrderUpdatesQuery;
-import com.saysimple.axon.coreapi.queries.TotalProductsShippedQuery;
+import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.event.OrderConfirmedEvent;
+import com.saysimple.axon.model.event.OrderCreatedEvent;
+import com.saysimple.axon.model.event.OrderShippedEvent;
+import com.saysimple.axon.model.event.ProductAddedEvent;
+import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
+import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
+import com.saysimple.axon.model.event.ProductRemovedEvent;
+import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
+import com.saysimple.axon.model.query.Order;
+import com.saysimple.axon.model.query.OrderStatus;
+import com.saysimple.axon.model.query.OrderUpdatesQuery;
+import com.saysimple.axon.model.query.TotalProductsShippedQuery;
 
 import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.junit.jupiter.api.*;
