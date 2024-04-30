@@ -1,12 +1,14 @@
 package com.saysimple.axon.dto;
 
 import lombok.Getter;
+import org.axonframework.spring.stereotype.Aggregate;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Getter
+@Aggregate(snapshotTriggerDefinition = "orderAggregateSnapshotTriggerDefinition")
 public class Order {
 
     private final String orderId;
