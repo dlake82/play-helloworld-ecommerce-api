@@ -1,13 +1,12 @@
-package com.saysimple.axon.aggregate;
+package com.saysimple.axon.uow;
 
+import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
 import com.saysimple.axon.model.command.DecrementProductCountCommand;
 import com.saysimple.axon.model.command.IncrementProductCountCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
 import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
 import com.saysimple.axon.model.event.ProductRemovedEvent;
-import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
-
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.EntityId;

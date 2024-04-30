@@ -1,18 +1,13 @@
-package com.saysimple.axon.aggregate;
+package com.saysimple.axon.uow;
 
+import com.saysimple.axon.exceptions.DuplicateOrderLineException;
+import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
+import com.saysimple.axon.exceptions.UnconfirmedOrderException;
 import com.saysimple.axon.model.command.AddProductCommand;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.command.ShipOrderCommand;
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderCreatedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductRemovedEvent;
-import com.saysimple.axon.exceptions.DuplicateOrderLineException;
-import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
-import com.saysimple.axon.exceptions.UnconfirmedOrderException;
-
+import com.saysimple.axon.model.event.*;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -37,6 +32,10 @@ public class OrderAggregate {
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
         apply(new OrderCreatedEvent(command.getOrderId()));
+    }
+
+    protected OrderAggregate() {
+        // Required by Axon to build a default Aggregate prior to Event Sourcing
     }
 
     @CommandHandler
@@ -91,9 +90,5 @@ public class OrderAggregate {
     @EventSourcingHandler
     public void on(ProductRemovedEvent event) {
         this.orderLines.remove(event.getProductId());
-    }
-
-    protected OrderAggregate() {
-        // Required by Axon to build a default Aggregate prior to Event Sourcing
     }
 }

@@ -1,22 +1,17 @@
 package com.saysimple.axon.querymodel;
 
 import com.saysimple.axon.OrderApplication;
+import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.service.OrderQueryService;
 import com.saysimple.axon.vo.OrderResponse;
 import com.saysimple.axon.vo.OrderStatusResponse;
-import com.saysimple.axon.handler.OrdersEventHandler;
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
-import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
-import com.saysimple.axon.model.query.Order;
-
 import org.axonframework.eventhandling.gateway.EventGateway;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -28,27 +23,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = OrderApplication.class)
 class OrderQueryServiceIntegrationTest {
 
+    private final String productId = "Deluxe Chair";
     @Autowired
     OrderQueryService queryService;
-
     @Autowired
     EventGateway eventGateway;
-
     @Autowired
     OrdersEventHandler handler;
-
     private String orderId;
-    private final String productId = "Deluxe Chair";
 
     @BeforeEach
     void setUp() {
         orderId = UUID.randomUUID()
-          .toString();
+                .toString();
         Order order = new Order(orderId);
         handler.reset(Collections.singletonList(order));
     }
@@ -56,29 +49,29 @@ class OrderQueryServiceIntegrationTest {
     @Test
     void givenOrderCreatedEventSend_whenCallingAllOrders_thenOneCreatedOrderIsReturned() throws ExecutionException, InterruptedException {
         List<OrderResponse> result = queryService.findAllOrders()
-          .get();
+                .get();
         assertEquals(1, result.size());
         OrderResponse response = result.get(0);
         assertEquals(orderId, response.getOrderId());
         assertEquals(OrderStatusResponse.CREATED, response.getOrderStatus());
         assertTrue(response.getProducts()
-          .isEmpty());
+                .isEmpty());
     }
 
     @Test
     void givenOrderCreatedEventSend_whenCallingAllOrdersStreaming_thenOneOrderIsReturned() {
         Flux<OrderResponse> result = queryService.allOrdersStreaming();
         StepVerifier.create(result)
-          .assertNext(order -> assertEquals(orderId, order.getOrderId()))
-          .expectComplete()
-          .verify();
+                .assertNext(order -> assertEquals(orderId, order.getOrderId()))
+                .expectComplete()
+                .verify();
     }
 
     @Test
     void givenThreeDeluxeChairsShipped_whenCallingAllShippedChairs_then234PlusTreeIsReturned() {
         Order order = new Order(orderId);
         order.getProducts()
-          .put(productId, 3);
+                .put(productId, 3);
         order.setOrderShipped();
         handler.reset(Collections.singletonList(order));
 
@@ -91,18 +84,18 @@ class OrderQueryServiceIntegrationTest {
         executor.schedule(this::addIncrementDecrementConfirmAndShip, 100L, TimeUnit.MILLISECONDS);
         try {
             StepVerifier.create(queryService.orderUpdates(orderId))
-              .assertNext(order -> assertTrue(order.getProducts()
-                .isEmpty()))
-              .assertNext(order -> assertEquals(1, order.getProducts()
-                .get(productId)))
-              .assertNext(order -> assertEquals(2, order.getProducts()
-                .get(productId)))
-              .assertNext(order -> assertEquals(1, order.getProducts()
-                .get(productId)))
-              .assertNext(order -> assertEquals(OrderStatusResponse.CONFIRMED, order.getOrderStatus()))
-              .assertNext(order -> assertEquals(OrderStatusResponse.SHIPPED, order.getOrderStatus()))
-              .thenCancel()
-              .verify();
+                    .assertNext(order -> assertTrue(order.getProducts()
+                            .isEmpty()))
+                    .assertNext(order -> assertEquals(1, order.getProducts()
+                            .get(productId)))
+                    .assertNext(order -> assertEquals(2, order.getProducts()
+                            .get(productId)))
+                    .assertNext(order -> assertEquals(1, order.getProducts()
+                            .get(productId)))
+                    .assertNext(order -> assertEquals(OrderStatusResponse.CONFIRMED, order.getOrderStatus()))
+                    .assertNext(order -> assertEquals(OrderStatusResponse.SHIPPED, order.getOrderStatus()))
+                    .thenCancel()
+                    .verify();
         } finally {
             executor.shutdown();
         }

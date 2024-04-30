@@ -1,6 +1,5 @@
-package com.saysimple.axon.model.query;
+package com.saysimple.axon.dto;
 
 public enum OrderStatus {
-
     CREATED, CONFIRMED, SHIPPED
 }

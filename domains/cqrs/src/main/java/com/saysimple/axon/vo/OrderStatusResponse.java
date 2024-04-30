@@ -1,6 +1,6 @@
 package com.saysimple.axon.vo;
 
-import com.saysimple.axon.model.query.OrderStatus;
+import com.saysimple.axon.dto.OrderStatus;
 
 public enum OrderStatusResponse {
     CREATED, CONFIRMED, SHIPPED, UNKNOWN;
@@ -8,7 +8,7 @@ public enum OrderStatusResponse {
     static OrderStatusResponse toResponse(OrderStatus status) {
         for (OrderStatusResponse response : values()) {
             if (response.toString()
-              .equals(status.toString())) {
+                    .equals(status.toString())) {
                 return response;
             }
         }

@@ -1,24 +1,16 @@
 package com.saysimple.axon.handler;
 
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderCreatedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
-import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
-import com.saysimple.axon.model.event.ProductRemovedEvent;
-import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
-import com.saysimple.axon.model.query.Order;
-import com.saysimple.axon.model.query.OrderStatus;
-import com.saysimple.axon.model.query.OrderUpdatesQuery;
-import com.saysimple.axon.model.query.TotalProductsShippedQuery;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.UpdateResult;
-
-
+import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.dto.OrderStatus;
+import com.saysimple.axon.model.event.*;
+import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
+import com.saysimple.axon.model.query.OrderUpdatesQuery;
+import com.saysimple.axon.model.query.TotalProductsShippedQuery;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
@@ -31,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-
 import reactor.core.publisher.Flux;
 
 import java.lang.invoke.MethodHandles;
@@ -49,20 +40,18 @@ import static com.mongodb.client.model.Filters.*;
 public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup()
-      .lookupClass());
-
-    private final MongoCollection<Document> orders;
-    private final QueryUpdateEmitter emitter;
+            .lookupClass());
     private static final String ORDER_COLLECTION_NAME = "orders";
     private static final String AXON_FRAMEWORK_DATABASE_NAME = "axonframework";
-
     private static final String ORDER_ID_PROPERTY_NAME = "orderId";
     private static final String PRODUCTS_PROPERTY_NAME = "products";
     private static final String ORDER_STATUS_PROPERTY_NAME = "orderStatus";
+    private final MongoCollection<Document> orders;
+    private final QueryUpdateEmitter emitter;
 
     public MongoOrdersEventHandler(MongoClient client, QueryUpdateEmitter emitter) {
         orders = client.getDatabase(AXON_FRAMEWORK_DATABASE_NAME)
-          .getCollection(ORDER_COLLECTION_NAME);
+                .getCollection(ORDER_COLLECTION_NAME);
         orders.createIndex(Indexes.ascending(ORDER_ID_PROPERTY_NAME), new IndexOptions().unique(true));
         this.emitter = emitter;
     }
@@ -106,23 +95,23 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
     public List<Order> handle(FindAllOrderedProductsQuery query) {
         List<Order> orderList = new ArrayList<>();
         orders.find()
-          .forEach(d -> orderList.add(documentToOrder(d)));
+                .forEach(d -> orderList.add(documentToOrder(d)));
         return orderList;
     }
 
     @Override
     public Publisher<Order> handleStreaming(FindAllOrderedProductsQuery query) {
         return Flux.fromIterable(orders.find())
-          .map(this::documentToOrder);
+                .map(this::documentToOrder);
     }
 
     @QueryHandler
     public Integer handle(TotalProductsShippedQuery query) {
         AtomicInteger result = new AtomicInteger();
         orders.find(shippedProductFilter(query.productId()))
-          .map(d -> d.get(PRODUCTS_PROPERTY_NAME, Document.class))
-          .map(d -> d.getInteger(query.productId(), 0))
-          .forEach(result::addAndGet);
+                .map(d -> d.get(PRODUCTS_PROPERTY_NAME, Document.class))
+                .map(d -> d.getInteger(query.productId(), 0))
+                .forEach(result::addAndGet);
         return result.get();
     }
 
@@ -139,13 +128,13 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     private Optional<Order> getOrder(String orderId) {
         return Optional.ofNullable(orders.find(eq(ORDER_ID_PROPERTY_NAME, orderId))
-            .first())
-          .map(this::documentToOrder);
+                        .first())
+                .map(this::documentToOrder);
     }
 
     private Order emitUpdate(Order order) {
         emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-          .equals(q.orderId()), order);
+                .equals(q.orderId()), order);
         return order;
     }
 
@@ -160,29 +149,29 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     private void update(String orderId, Consumer<Order> updateFunction) {
         UpdateResult result = getOrder(orderId).map(o -> updateOrder(o, updateFunction))
-          .map(this::emitUpdate)
-          .map(this::persistUpdate)
-          .orElse(null);
+                .map(this::emitUpdate)
+                .map(this::persistUpdate)
+                .orElse(null);
         logger.info("Result of updating order with orderId '{}': {}", orderId, result);
     }
 
     private Document orderToDocument(Order order) {
         return new Document(ORDER_ID_PROPERTY_NAME, order.getOrderId()).append(PRODUCTS_PROPERTY_NAME, order.getProducts())
-          .append(ORDER_STATUS_PROPERTY_NAME, order.getOrderStatus()
-            .toString());
+                .append(ORDER_STATUS_PROPERTY_NAME, order.getOrderStatus()
+                        .toString());
     }
 
     private Order documentToOrder(@NonNull Document document) {
         Order order = new Order(document.getString(ORDER_ID_PROPERTY_NAME));
         Document products = document.get(PRODUCTS_PROPERTY_NAME, Document.class);
         products.forEach((k, v) -> order.getProducts()
-          .put(k, (Integer) v));
+                .put(k, (Integer) v));
         String status = document.getString(ORDER_STATUS_PROPERTY_NAME);
         if (OrderStatus.CONFIRMED.toString()
-          .equals(status)) {
+                .equals(status)) {
             order.setOrderConfirmed();
         } else if (OrderStatus.SHIPPED.toString()
-          .equals(status)) {
+                .equals(status)) {
             order.setOrderShipped();
         }
         return order;

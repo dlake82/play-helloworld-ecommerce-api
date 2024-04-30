@@ -1,22 +1,17 @@
 package com.saysimple.axon.querymodel;
 
+import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.dto.OrderStatus;
 import com.saysimple.axon.handler.OrdersEventHandler;
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderCreatedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
-import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
-import com.saysimple.axon.model.event.ProductRemovedEvent;
+import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
-import com.saysimple.axon.model.query.Order;
-import com.saysimple.axon.model.query.OrderStatus;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
-
 import org.axonframework.queryhandling.QueryUpdateEmitter;
-import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -25,36 +20,37 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public abstract class AbstractOrdersEventHandlerUnitTest {
 
     private static final String ORDER_ID_1 = UUID.randomUUID()
-      .toString();
+            .toString();
     private static final String ORDER_ID_2 = UUID.randomUUID()
-      .toString();
+            .toString();
     private static final String PRODUCT_ID_1 = UUID.randomUUID()
-      .toString();
+            .toString();
     private static final String PRODUCT_ID_2 = UUID.randomUUID()
-      .toString();
-    private OrdersEventHandler handler;
+            .toString();
     private static Order orderOne;
     private static Order orderTwo;
     QueryUpdateEmitter emitter = mock(QueryUpdateEmitter.class);
+    private OrdersEventHandler handler;
 
     @BeforeAll
     static void createOrders() {
         orderOne = new Order(ORDER_ID_1);
         orderOne.getProducts()
-          .put(PRODUCT_ID_1, 3);
+                .put(PRODUCT_ID_1, 3);
         orderOne.setOrderShipped();
 
         orderTwo = new Order(ORDER_ID_2);
         orderTwo.getProducts()
-          .put(PRODUCT_ID_1, 1);
+                .put(PRODUCT_ID_1, 1);
         orderTwo.getProducts()
-          .put(PRODUCT_ID_2, 1);
+                .put(PRODUCT_ID_2, 1);
         orderTwo.setOrderConfirmed();
     }
 
@@ -75,17 +71,17 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
         assertEquals(2, result.size());
 
         Order order_1 = result.stream()
-          .filter(o -> o.getOrderId()
-            .equals(ORDER_ID_1))
-          .findFirst()
-          .orElse(null);
+                .filter(o -> o.getOrderId()
+                        .equals(ORDER_ID_1))
+                .findFirst()
+                .orElse(null);
         assertEquals(orderOne, order_1);
 
         Order order_2 = result.stream()
-          .filter(o -> o.getOrderId()
-            .equals(ORDER_ID_2))
-          .findFirst()
-          .orElse(null);
+                .filter(o -> o.getOrderId()
+                        .equals(ORDER_ID_2))
+                .findFirst()
+                .orElse(null);
         assertEquals(orderTwo, order_2);
     }
 
@@ -95,10 +91,10 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
         resetWithTwoOrders();
         final Consumer<Order> orderVerifier = order -> {
             if (order.getOrderId()
-              .equals(orderOne.getOrderId())) {
+                    .equals(orderOne.getOrderId())) {
                 assertEquals(orderOne, order);
             } else if (order.getOrderId()
-              .equals(orderTwo.getOrderId())) {
+                    .equals(orderTwo.getOrderId())) {
                 assertEquals(orderTwo, order);
             } else {
                 throw new RuntimeException("Would expect either order one or order two");
@@ -106,10 +102,10 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
         };
 
         StepVerifier.create(Flux.from(handler.handleStreaming(new FindAllOrderedProductsQuery())))
-          .assertNext(orderVerifier)
-          .assertNext(orderVerifier)
-          .expectComplete()
-          .verify();
+                .assertNext(orderVerifier)
+                .assertNext(orderVerifier)
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -146,7 +142,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
         assertNotNull(result);
         assertEquals(ORDER_ID_1, result.getOrderId());
         assertEquals(3, result.getProducts()
-          .get(PRODUCT_ID_1));
+                .get(PRODUCT_ID_1));
         assertEquals(OrderStatus.SHIPPED, result.getOrderStatus());
     }
 

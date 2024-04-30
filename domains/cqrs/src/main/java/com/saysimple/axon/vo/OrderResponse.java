@@ -1,6 +1,6 @@
 package com.saysimple.axon.vo;
 
-import com.saysimple.axon.model.query.Order;
+import com.saysimple.axon.dto.Order;
 
 import java.util.Map;
 

@@ -1,18 +1,11 @@
 package com.saysimple.axon.handler;
 
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderCreatedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
-import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
-import com.saysimple.axon.model.event.ProductRemovedEvent;
+import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.dto.OrderStatus;
+import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
-import com.saysimple.axon.model.query.Order;
-import com.saysimple.axon.model.query.OrderStatus;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
-
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
@@ -20,15 +13,10 @@ import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.reactivestreams.Publisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @ProcessingGroup("orders")
@@ -110,18 +98,18 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
     @QueryHandler
     public Publisher<Order> handleStreaming(FindAllOrderedProductsQuery query) {
         return Mono.fromCallable(orders::values)
-          .flatMapMany(Flux::fromIterable);
+                .flatMapMany(Flux::fromIterable);
     }
 
     @QueryHandler
     public Integer handle(TotalProductsShippedQuery query) {
         return orders.values()
-          .stream()
-          .filter(o -> o.getOrderStatus() == OrderStatus.SHIPPED)
-          .map(o -> Optional.ofNullable(o.getProducts()
-              .get(query.productId()))
-            .orElse(0))
-          .reduce(0, Integer::sum);
+                .stream()
+                .filter(o -> o.getOrderStatus() == OrderStatus.SHIPPED)
+                .map(o -> Optional.ofNullable(o.getProducts()
+                                .get(query.productId()))
+                        .orElse(0))
+                .reduce(0, Integer::sum);
     }
 
     @QueryHandler
@@ -131,7 +119,7 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     private void emitUpdate(Order order) {
         emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-          .equals(q.orderId()), order);
+                .equals(q.orderId()), order);
     }
 
     @Override

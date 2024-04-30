@@ -1,10 +1,9 @@
 package com.saysimple.axon.service;
 
+import com.saysimple.axon.dto.Order;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
-import com.saysimple.axon.model.query.Order;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
-
 import com.saysimple.axon.vo.OrderResponse;
 import org.axonframework.messaging.responsetypes.ResponseType;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -12,7 +11,6 @@ import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
-
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -31,20 +29,20 @@ public class OrderQueryService {
 
     public CompletableFuture<List<OrderResponse>> findAllOrders() {
         return queryGateway.query(new FindAllOrderedProductsQuery(), ResponseTypes.multipleInstancesOf(Order.class))
-          .thenApply(r -> r.stream()
-            .map(OrderResponse::new)
-            .collect(Collectors.toList()));
+                .thenApply(r -> r.stream()
+                        .map(OrderResponse::new)
+                        .collect(Collectors.toList()));
     }
 
     public Flux<OrderResponse> allOrdersStreaming() {
         Publisher<Order> publisher = queryGateway.streamingQuery(new FindAllOrderedProductsQuery(), Order.class);
         return Flux.from(publisher)
-          .map(OrderResponse::new);
+                .map(OrderResponse::new);
     }
 
     public Integer totalShipped(String productId) {
         return queryGateway.scatterGather(new TotalProductsShippedQuery(productId), ResponseTypes.instanceOf(Integer.class), 10L, TimeUnit.SECONDS)
-          .reduce(0, Integer::sum);
+                .reduce(0, Integer::sum);
     }
 
     public Flux<OrderResponse> orderUpdates(String orderId) {
@@ -54,7 +52,7 @@ public class OrderQueryService {
     private <Q, R> Flux<R> subscriptionQuery(Q query, ResponseType<R> resultType) {
         SubscriptionQueryResult<R, R> result = queryGateway.subscriptionQuery(query, resultType, resultType);
         return result.initialResult()
-          .concatWith(result.updates())
-          .doFinally(signal -> result.close());
+                .concatWith(result.updates())
+                .doFinally(signal -> result.close());
     }
 }

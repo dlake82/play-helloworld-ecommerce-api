@@ -1,17 +1,10 @@
 package com.saysimple.axon.handler;
 
-import com.saysimple.axon.model.event.OrderConfirmedEvent;
-import com.saysimple.axon.model.event.OrderCreatedEvent;
-import com.saysimple.axon.model.event.OrderShippedEvent;
-import com.saysimple.axon.model.event.ProductAddedEvent;
-import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
-import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
-import com.saysimple.axon.model.event.ProductRemovedEvent;
+import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
-import com.saysimple.axon.model.query.Order;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
-
 import org.reactivestreams.Publisher;
 
 import java.util.List;

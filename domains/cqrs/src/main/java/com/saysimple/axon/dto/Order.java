@@ -1,4 +1,4 @@
-package com.saysimple.axon.model.query;
+package com.saysimple.axon.dto;
 
 import lombok.Getter;
 
