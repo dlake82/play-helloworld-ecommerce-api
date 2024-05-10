@@ -31,7 +31,7 @@ public class OrderAggregate {
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
-        apply(new OrderCreatedEvent(command.getOrderId()));
+        apply(new OrderCreatedEvent(command.getOrderId(), command.getProductId(), command.getUserId()));
     }
 
     protected OrderAggregate() {

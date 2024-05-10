@@ -1,7 +1,7 @@
 package com.saysimple.axon.querymodel;
 
-import com.saysimple.axon.dto.Order;
-import com.saysimple.axon.dto.OrderStatus;
+import com.saysimple.axon.aggregate.OrderAggregate;
+import com.saysimple.axon.aggregate.OrderStatus;
 import com.saysimple.axon.handler.OrdersEventHandler;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
@@ -34,24 +34,20 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
             .toString();
     private static final String PRODUCT_ID_2 = UUID.randomUUID()
             .toString();
-    private static Order orderOne;
-    private static Order orderTwo;
+    private static final String USER_ID_1 = UUID.randomUUID()
+            .toString();
+    private static final String USER_ID_2 = UUID.randomUUID()
+            .toString();
+    private static OrderAggregate orderAggregateOne;
+    private static OrderAggregate orderAggregateTwo;
     QueryUpdateEmitter emitter = mock(QueryUpdateEmitter.class);
     private OrdersEventHandler handler;
 
     @BeforeAll
     static void createOrders() {
-        orderOne = new Order(ORDER_ID_1);
-        orderOne.getProducts()
-                .put(PRODUCT_ID_1, 3);
-        orderOne.setOrderShipped();
-
-        orderTwo = new Order(ORDER_ID_2);
-        orderTwo.getProducts()
-                .put(PRODUCT_ID_1, 1);
-        orderTwo.getProducts()
-                .put(PRODUCT_ID_2, 1);
-        orderTwo.setOrderConfirmed();
+        orderAggregateOne = new OrderAggregate(ORDER_ID_1, PRODUCT_ID_1, USER_ID_1);
+        orderAggregateTwo = new OrderAggregate(ORDER_ID_2, PRODUCT_ID_2, USER_ID_2);
+        orderAggregateTwo.setOrderConfirmed();
     }
 
     @BeforeEach
@@ -65,37 +61,37 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     @DisplayName("두 개의 주문을 초기화 한 후 모든 주문을 찾는 쿼리를 수행하면 두 개의 주문이 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenFindAllOrderedProductsQuery_thenCorrectOrdersAreReturned() {
         resetWithTwoOrders();
-        List<Order> result = handler.handle(new FindAllOrderedProductsQuery());
+        List<OrderAggregate> result = handler.handle(new FindAllOrderedProductsQuery());
 
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        Order order_1 = result.stream()
+        OrderAggregate order_Aggregate_1 = result.stream()
                 .filter(o -> o.getOrderId()
                         .equals(ORDER_ID_1))
                 .findFirst()
                 .orElse(null);
-        assertEquals(orderOne, order_1);
+        assertEquals(orderAggregateOne, order_Aggregate_1);
 
-        Order order_2 = result.stream()
+        OrderAggregate order_Aggregate_2 = result.stream()
                 .filter(o -> o.getOrderId()
                         .equals(ORDER_ID_2))
                 .findFirst()
                 .orElse(null);
-        assertEquals(orderTwo, order_2);
+        assertEquals(orderAggregateTwo, order_Aggregate_2);
     }
 
     @Test
     @DisplayName("두 개의 주문을 초기화 한 후 모든 주문을 찾는 쿼리를 스트리밍으로 수행하면 두 개의 주문이 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenFindAllOrderedProductsQueryStreaming_thenCorrectOrdersAreReturned() {
         resetWithTwoOrders();
-        final Consumer<Order> orderVerifier = order -> {
+        final Consumer<OrderAggregate> orderVerifier = order -> {
             if (order.getOrderId()
-                    .equals(orderOne.getOrderId())) {
-                assertEquals(orderOne, order);
+                    .equals(orderAggregateOne.getOrderId())) {
+                assertEquals(orderAggregateOne, order);
             } else if (order.getOrderId()
-                    .equals(orderTwo.getOrderId())) {
-                assertEquals(orderTwo, order);
+                    .equals(orderAggregateTwo.getOrderId())) {
+                assertEquals(orderAggregateTwo, order);
             } else {
                 throw new RuntimeException("Would expect either order one or order two");
             }
@@ -138,7 +134,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     void givenOrderExist_whenOrderUpdatesQuery_thenOrderReturned() {
         resetWithTwoOrders();
 
-        Order result = handler.handle(new OrderUpdatesQuery(ORDER_ID_1));
+        OrderAggregate result = handler.handle(new OrderUpdatesQuery(ORDER_ID_1));
         assertNotNull(result);
         assertEquals(ORDER_ID_1, result.getOrderId());
         assertEquals(3, result.getProducts()
@@ -153,7 +149,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     @Test
@@ -165,7 +161,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new ProductCountDecrementedEvent(ORDER_ID_1, PRODUCT_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     @Test
@@ -177,7 +173,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new ProductRemovedEvent(ORDER_ID_1, PRODUCT_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     @Test
@@ -189,7 +185,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new ProductCountIncrementedEvent(ORDER_ID_1, PRODUCT_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     @Test
@@ -201,7 +197,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new OrderConfirmedEvent(ORDER_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     @Test
@@ -213,10 +209,10 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         handler.on(new OrderShippedEvent(ORDER_ID_1));
 
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(Order.class));
+        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     private void resetWithTwoOrders() {
-        handler.reset(Arrays.asList(orderOne, orderTwo));
+        handler.reset(Arrays.asList(orderAggregateOne, orderAggregateTwo));
     }
 }

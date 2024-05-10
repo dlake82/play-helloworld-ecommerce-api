@@ -1,4 +1,4 @@
-package com.saysimple.axon.dto;
+package com.saysimple.axon.aggregate;
 
 public enum OrderStatus {
     CREATED, CONFIRMED, SHIPPED

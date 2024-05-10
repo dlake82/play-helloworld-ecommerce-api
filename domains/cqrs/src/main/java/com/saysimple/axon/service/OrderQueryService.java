@@ -1,6 +1,6 @@
 package com.saysimple.axon.service;
 
-import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.aggregate.OrderAggregate;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -28,14 +28,14 @@ public class OrderQueryService {
     }
 
     public CompletableFuture<List<OrderResponse>> findAllOrders() {
-        return queryGateway.query(new FindAllOrderedProductsQuery(), ResponseTypes.multipleInstancesOf(Order.class))
+        return queryGateway.query(new FindAllOrderedProductsQuery(), ResponseTypes.multipleInstancesOf(OrderAggregate.class))
                 .thenApply(r -> r.stream()
                         .map(OrderResponse::new)
                         .collect(Collectors.toList()));
     }
 
     public Flux<OrderResponse> allOrdersStreaming() {
-        Publisher<Order> publisher = queryGateway.streamingQuery(new FindAllOrderedProductsQuery(), Order.class);
+        Publisher<OrderAggregate> publisher = queryGateway.streamingQuery(new FindAllOrderedProductsQuery(), OrderAggregate.class);
         return Flux.from(publisher)
                 .map(OrderResponse::new);
     }
@@ -46,7 +46,7 @@ public class OrderQueryService {
     }
 
     public Flux<OrderResponse> orderUpdates(String orderId) {
-        return subscriptionQuery(new OrderUpdatesQuery(orderId), ResponseTypes.instanceOf(Order.class)).map(OrderResponse::new);
+        return subscriptionQuery(new OrderUpdatesQuery(orderId), ResponseTypes.instanceOf(OrderAggregate.class)).map(OrderResponse::new);
     }
 
     private <Q, R> Flux<R> subscriptionQuery(Q query, ResponseType<R> resultType) {

@@ -1,15 +1,16 @@
 package com.saysimple.axon.model.command;
 
-import java.util.Objects;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
+import java.util.Objects;
+
 @Getter
 @AllArgsConstructor
 public class ShipOrderCommand {
-    @TargetAggregateIdentifier String orderId;
+    @TargetAggregateIdentifier
+    String orderId;
 
     @Override
     public boolean equals(Object obj) {

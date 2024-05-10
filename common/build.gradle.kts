@@ -22,6 +22,8 @@ extra["springCloudVersion"] = "2023.0.1"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.modelmapper:modelmapper:2.4.4")
     implementation("org.projectlombok:lombok:1.18.22")
 }

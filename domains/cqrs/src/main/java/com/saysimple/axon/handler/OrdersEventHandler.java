@@ -1,7 +1,9 @@
 package com.saysimple.axon.handler;
 
-import com.saysimple.axon.dto.Order;
-import com.saysimple.axon.model.event.*;
+import com.saysimple.axon.aggregate.OrderAggregate;
+import com.saysimple.axon.model.event.OrderConfirmedEvent;
+import com.saysimple.axon.model.event.OrderCreatedEvent;
+import com.saysimple.axon.model.event.OrderShippedEvent;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -13,25 +15,17 @@ public interface OrdersEventHandler {
 
     void on(OrderCreatedEvent event);
 
-    void on(ProductAddedEvent event);
-
-    void on(ProductCountIncrementedEvent event);
-
-    void on(ProductCountDecrementedEvent event);
-
-    void on(ProductRemovedEvent event);
-
     void on(OrderConfirmedEvent event);
 
     void on(OrderShippedEvent event);
 
-    List<Order> handle(FindAllOrderedProductsQuery query);
+    List<OrderAggregate> handle(FindAllOrderedProductsQuery query);
 
-    Publisher<Order> handleStreaming(FindAllOrderedProductsQuery query);
+    Publisher<OrderAggregate> handleStreaming(FindAllOrderedProductsQuery query);
 
     Integer handle(TotalProductsShippedQuery query);
 
-    Order handle(OrderUpdatesQuery query);
+    OrderAggregate handle(OrderUpdatesQuery query);
 
-    void reset(List<Order> orderList);
+    void reset(List<OrderAggregate> orderAggregateList);
 }

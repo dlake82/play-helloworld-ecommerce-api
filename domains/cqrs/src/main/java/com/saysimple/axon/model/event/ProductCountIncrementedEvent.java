@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProductCountIncrementedEvent{
+public class ProductCountIncrementedEvent {
 
     private String orderId;
     private String productId;

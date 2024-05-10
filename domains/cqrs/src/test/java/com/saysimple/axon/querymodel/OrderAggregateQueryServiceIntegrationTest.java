@@ -1,7 +1,7 @@
 package com.saysimple.axon.querymodel;
 
 import com.saysimple.axon.OrderApplication;
-import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.aggregate.OrderAggregate;
 import com.saysimple.axon.handler.OrdersEventHandler;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.service.OrderQueryService;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = OrderApplication.class)
-class OrderQueryServiceIntegrationTest {
+class OrderAggregateQueryServiceIntegrationTest {
 
     private final String productId = "Deluxe Chair";
     @Autowired
@@ -42,8 +42,8 @@ class OrderQueryServiceIntegrationTest {
     void setUp() {
         orderId = UUID.randomUUID()
                 .toString();
-        Order order = new Order(orderId);
-        handler.reset(Collections.singletonList(order));
+        OrderAggregate orderAggregate = new OrderAggregate(orderId);
+        handler.reset(Collections.singletonList(orderAggregate));
     }
 
     @Test
@@ -69,11 +69,11 @@ class OrderQueryServiceIntegrationTest {
 
     @Test
     void givenThreeDeluxeChairsShipped_whenCallingAllShippedChairs_then234PlusTreeIsReturned() {
-        Order order = new Order(orderId);
-        order.getProducts()
+        OrderAggregate orderAggregate = new OrderAggregate(orderId);
+        orderAggregate.getProducts()
                 .put(productId, 3);
-        order.setOrderShipped();
-        handler.reset(Collections.singletonList(order));
+        orderAggregate.setOrderShipped();
+        handler.reset(Collections.singletonList(orderAggregate));
 
         assertEquals(237, queryService.totalShipped(productId));
     }

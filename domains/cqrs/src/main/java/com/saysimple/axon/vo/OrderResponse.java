@@ -1,6 +1,6 @@
 package com.saysimple.axon.vo;
 
-import com.saysimple.axon.dto.Order;
+import com.saysimple.axon.aggregate.OrderAggregate;
 
 import java.util.Map;
 
@@ -12,10 +12,10 @@ public class OrderResponse {
     private Map<String, Integer> products;
     private OrderStatusResponse orderStatus;
 
-    public OrderResponse(Order order) {
-        this.orderId = order.getOrderId();
-        this.products = order.getProducts();
-        this.orderStatus = toResponse(order.getOrderStatus());
+    public OrderResponse(OrderAggregate orderAggregate) {
+        this.orderId = orderAggregate.getOrderId();
+        this.products = orderAggregate.getProducts();
+        this.orderStatus = toResponse(orderAggregate.getOrderStatus());
     }
 
     /**

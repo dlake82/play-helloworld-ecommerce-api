@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-class OrderAggregateUnitTest {
+class OrderAggregateAggregateUnitTest {
 
     private static final String ORDER_ID = UUID.randomUUID()
             .toString();

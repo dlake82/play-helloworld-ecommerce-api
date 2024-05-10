@@ -1,6 +1,6 @@
 package com.saysimple.axon.vo;
 
-import com.saysimple.axon.dto.OrderStatus;
+import com.saysimple.axon.aggregate.OrderStatus;
 
 public enum OrderStatusResponse {
     CREATED, CONFIRMED, SHIPPED, UNKNOWN;

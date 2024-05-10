@@ -5,9 +5,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.UpdateResult;
-import com.saysimple.axon.dto.Order;
-import com.saysimple.axon.dto.OrderStatus;
-import com.saysimple.axon.model.event.*;
+import com.saysimple.axon.aggregate.OrderAggregate;
+import com.saysimple.axon.aggregate.OrderStatus;
+import com.saysimple.axon.model.event.OrderConfirmedEvent;
+import com.saysimple.axon.model.event.OrderCreatedEvent;
+import com.saysimple.axon.model.event.OrderShippedEvent;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -44,7 +46,8 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
     private static final String ORDER_COLLECTION_NAME = "orders";
     private static final String AXON_FRAMEWORK_DATABASE_NAME = "axonframework";
     private static final String ORDER_ID_PROPERTY_NAME = "orderId";
-    private static final String PRODUCTS_PROPERTY_NAME = "products";
+    private static final String PRODUCTS_PROPERTY_NAME = "productId";
+    private static final String USERS_PROPERTY_NAME = "userId";
     private static final String ORDER_STATUS_PROPERTY_NAME = "orderStatus";
     private final MongoCollection<Document> orders;
     private final QueryUpdateEmitter emitter;
@@ -58,49 +61,29 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderCreatedEvent event) {
-        orders.insertOne(orderToDocument(new Order(event.getOrderId())));
-    }
-
-    @EventHandler
-    public void on(ProductAddedEvent event) {
-        update(event.getOrderId(), o -> o.addProduct(event.getProductId()));
-    }
-
-    @EventHandler
-    public void on(ProductCountIncrementedEvent event) {
-        update(event.getOrderId(), o -> o.incrementProductInstance(event.getProductId()));
-    }
-
-    @EventHandler
-    public void on(ProductCountDecrementedEvent event) {
-        update(event.getOrderId(), o -> o.decrementProductInstance(event.getProductId()));
-    }
-
-    @EventHandler
-    public void on(ProductRemovedEvent event) {
-        update(event.getOrderId(), o -> o.removeProduct(event.getProductId()));
+        orders.insertOne(orderToDocument(new OrderAggregate(event.getOrderId(), event.getProductId(), event.getUserId())));
     }
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        update(event.getOrderId(), Order::setOrderConfirmed);
+        update(event.getOrderId(), OrderAggregate::setOrderConfirmed);
     }
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        update(event.getOrderId(), Order::setOrderShipped);
+        update(event.getOrderId(), OrderAggregate::setOrderShipped);
     }
 
     @QueryHandler
-    public List<Order> handle(FindAllOrderedProductsQuery query) {
-        List<Order> orderList = new ArrayList<>();
+    public List<OrderAggregate> handle(FindAllOrderedProductsQuery query) {
+        List<OrderAggregate> orderAggregateList = new ArrayList<>();
         orders.find()
-                .forEach(d -> orderList.add(documentToOrder(d)));
-        return orderList;
+                .forEach(d -> orderAggregateList.add(documentToOrder(d)));
+        return orderAggregateList;
     }
 
     @Override
-    public Publisher<Order> handleStreaming(FindAllOrderedProductsQuery query) {
+    public Publisher<OrderAggregate> handleStreaming(FindAllOrderedProductsQuery query) {
         return Flux.fromIterable(orders.find())
                 .map(this::documentToOrder);
     }
@@ -116,38 +99,38 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
     }
 
     @QueryHandler
-    public Order handle(OrderUpdatesQuery query) {
+    public OrderAggregate handle(OrderUpdatesQuery query) {
         return getOrder(query.orderId()).orElse(null);
     }
 
     @Override
-    public void reset(List<Order> orderList) {
+    public void reset(List<OrderAggregate> orderAggregateList) {
         orders.deleteMany(new Document());
-        orderList.forEach(o -> orders.insertOne(orderToDocument(o)));
+        orderAggregateList.forEach(o -> orders.insertOne(orderToDocument(o)));
     }
 
-    private Optional<Order> getOrder(String orderId) {
+    private Optional<OrderAggregate> getOrder(String orderId) {
         return Optional.ofNullable(orders.find(eq(ORDER_ID_PROPERTY_NAME, orderId))
                         .first())
                 .map(this::documentToOrder);
     }
 
-    private Order emitUpdate(Order order) {
-        emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-                .equals(q.orderId()), order);
-        return order;
+    private OrderAggregate emitUpdate(OrderAggregate orderAggregate) {
+        emitter.emit(OrderUpdatesQuery.class, q -> orderAggregate.getOrderId()
+                .equals(q.orderId()), orderAggregate);
+        return orderAggregate;
     }
 
-    private Order updateOrder(Order order, Consumer<Order> updateFunction) {
-        updateFunction.accept(order);
-        return order;
+    private OrderAggregate updateOrder(OrderAggregate orderAggregate, Consumer<OrderAggregate> updateFunction) {
+        updateFunction.accept(orderAggregate);
+        return orderAggregate;
     }
 
-    private UpdateResult persistUpdate(Order order) {
-        return orders.replaceOne(eq(ORDER_ID_PROPERTY_NAME, order.getOrderId()), orderToDocument(order));
+    private UpdateResult persistUpdate(OrderAggregate orderAggregate) {
+        return orders.replaceOne(eq(ORDER_ID_PROPERTY_NAME, orderAggregate.getOrderId()), orderToDocument(orderAggregate));
     }
 
-    private void update(String orderId, Consumer<Order> updateFunction) {
+    private void update(String orderId, Consumer<OrderAggregate> updateFunction) {
         UpdateResult result = getOrder(orderId).map(o -> updateOrder(o, updateFunction))
                 .map(this::emitUpdate)
                 .map(this::persistUpdate)
@@ -155,26 +138,23 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
         logger.info("Result of updating order with orderId '{}': {}", orderId, result);
     }
 
-    private Document orderToDocument(Order order) {
-        return new Document(ORDER_ID_PROPERTY_NAME, order.getOrderId()).append(PRODUCTS_PROPERTY_NAME, order.getProducts())
-                .append(ORDER_STATUS_PROPERTY_NAME, order.getOrderStatus()
-                        .toString());
+    private Document orderToDocument(OrderAggregate orderAggregate) {
+        return new Document(ORDER_ID_PROPERTY_NAME, orderAggregate.getOrderId())
+                .append(PRODUCTS_PROPERTY_NAME, orderAggregate.getProductId())
+                .append(USERS_PROPERTY_NAME, orderAggregate.getUserId());
     }
 
-    private Order documentToOrder(@NonNull Document document) {
-        Order order = new Order(document.getString(ORDER_ID_PROPERTY_NAME));
-        Document products = document.get(PRODUCTS_PROPERTY_NAME, Document.class);
-        products.forEach((k, v) -> order.getProducts()
-                .put(k, (Integer) v));
+    private OrderAggregate documentToOrder(@NonNull Document document) {
+        OrderAggregate orderAggregate = new OrderAggregate(document.getString(ORDER_ID_PROPERTY_NAME), document.getString(PRODUCTS_PROPERTY_NAME), document.getString(USERS_PROPERTY_NAME));
         String status = document.getString(ORDER_STATUS_PROPERTY_NAME);
         if (OrderStatus.CONFIRMED.toString()
                 .equals(status)) {
-            order.setOrderConfirmed();
+            orderAggregate.setOrderConfirmed();
         } else if (OrderStatus.SHIPPED.toString()
                 .equals(status)) {
-            order.setOrderShipped();
+            orderAggregate.setOrderShipped();
         }
-        return order;
+        return orderAggregate;
     }
 
     private Bson shippedProductFilter(String productId) {

@@ -1,8 +1,10 @@
 package com.saysimple.axon.handler;
 
-import com.saysimple.axon.dto.Order;
-import com.saysimple.axon.dto.OrderStatus;
-import com.saysimple.axon.model.event.*;
+import com.saysimple.axon.aggregate.OrderAggregate;
+import com.saysimple.axon.aggregate.OrderStatus;
+import com.saysimple.axon.model.event.OrderConfirmedEvent;
+import com.saysimple.axon.model.event.OrderCreatedEvent;
+import com.saysimple.axon.model.event.OrderShippedEvent;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -16,14 +18,17 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @ProcessingGroup("orders")
 @Profile("!mongo")
 public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
-    private final Map<String, Order> orders = new HashMap<>();
+    private final Map<String, OrderAggregate> orders = new HashMap<>();
     private final QueryUpdateEmitter emitter;
 
     public InMemoryOrdersEventHandler(QueryUpdateEmitter emitter) {
@@ -33,43 +38,9 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
     @EventHandler
     public void on(OrderCreatedEvent event) {
         String orderId = event.getOrderId();
-        orders.put(orderId, new Order(orderId));
-    }
-
-    @EventHandler
-    public void on(ProductAddedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.addProduct(event.getProductId());
-            emitUpdate(order);
-            return order;
-        });
-    }
-
-    @EventHandler
-    public void on(ProductCountIncrementedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.incrementProductInstance(event.getProductId());
-            emitUpdate(order);
-            return order;
-        });
-    }
-
-    @EventHandler
-    public void on(ProductCountDecrementedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.decrementProductInstance(event.getProductId());
-            emitUpdate(order);
-            return order;
-        });
-    }
-
-    @EventHandler
-    public void on(ProductRemovedEvent event) {
-        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.removeProduct(event.getProductId());
-            emitUpdate(order);
-            return order;
-        });
+        String productId = event.getProductId();
+        String userId = event.getUserId();
+        orders.put(orderId, new OrderAggregate(orderId, productId, userId));
     }
 
     @EventHandler
@@ -91,40 +62,36 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
     }
 
     @QueryHandler
-    public List<Order> handle(FindAllOrderedProductsQuery query) {
+    public List<OrderAggregate> handle(FindAllOrderedProductsQuery query) {
         return new ArrayList<>(orders.values());
     }
 
     @QueryHandler
-    public Publisher<Order> handleStreaming(FindAllOrderedProductsQuery query) {
+    public Publisher<OrderAggregate> handleStreaming(FindAllOrderedProductsQuery query) {
         return Mono.fromCallable(orders::values)
                 .flatMapMany(Flux::fromIterable);
     }
 
     @QueryHandler
     public Integer handle(TotalProductsShippedQuery query) {
-        return orders.values()
+        return (int) orders.values()
                 .stream()
-                .filter(o -> o.getOrderStatus() == OrderStatus.SHIPPED)
-                .map(o -> Optional.ofNullable(o.getProducts()
-                                .get(query.productId()))
-                        .orElse(0))
-                .reduce(0, Integer::sum);
+                .filter(o -> o.getOrderStatus() == OrderStatus.SHIPPED).count();
     }
 
     @QueryHandler
-    public Order handle(OrderUpdatesQuery query) {
+    public OrderAggregate handle(OrderUpdatesQuery query) {
         return orders.get(query.orderId());
     }
 
-    private void emitUpdate(Order order) {
-        emitter.emit(OrderUpdatesQuery.class, q -> order.getOrderId()
-                .equals(q.orderId()), order);
+    private void emitUpdate(OrderAggregate orderAggregate) {
+        emitter.emit(OrderUpdatesQuery.class, q -> orderAggregate.getOrderId()
+                .equals(q.orderId()), orderAggregate);
     }
 
     @Override
-    public void reset(List<Order> orderList) {
+    public void reset(List<OrderAggregate> orderAggregateList) {
         orders.clear();
-        orderList.forEach(o -> orders.put(o.getOrderId(), o));
+        orderAggregateList.forEach(o -> orders.put(o.getOrderId(), o));
     }
 }

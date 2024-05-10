@@ -8,8 +8,8 @@ import org.saysimple.models.Auditable;
 import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
 @Entity
+@Data
 @Table(name = "order")
 public class OrderEntity extends Auditable implements Serializable {
     @Id
