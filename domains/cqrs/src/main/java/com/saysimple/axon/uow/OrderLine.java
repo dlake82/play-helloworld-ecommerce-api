@@ -1,6 +1,6 @@
 package com.saysimple.axon.uow;
 
-import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
+import com.saysimple.axon.exceptions.OrderIsNotConfirmedException;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
 import com.saysimple.axon.model.event.ProductCountIncrementedEvent;
@@ -28,7 +28,7 @@ public class OrderLine {
     @CommandHandler
     public void handle(IncrementProductCountCommand command) {
         if (orderConfirmed) {
-            throw new OrderAlreadyConfirmedException(command.getOrderId());
+            throw new OrderIsNotConfirmedException(command.getOrderId());
         }
 
         apply(new ProductCountIncrementedEvent(command.getOrderId(), productId));
@@ -37,7 +37,7 @@ public class OrderLine {
     @CommandHandler
     public void handle(DecrementProductCountCommand command) {
         if (orderConfirmed) {
-            throw new OrderAlreadyConfirmedException(command.getOrderId());
+            throw new OrderIsNotConfirmedException(command.getOrderId());
         }
 
         if (count <= 1) {

@@ -1,7 +1,7 @@
 package com.saysimple.axon.uow;
 
 import com.saysimple.axon.exceptions.DuplicateOrderLineException;
-import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
+import com.saysimple.axon.exceptions.OrderIsNotConfirmedException;
 import com.saysimple.axon.exceptions.UnconfirmedOrderException;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
@@ -40,7 +40,7 @@ public class OrderAggregate {
     @CommandHandler
     public void handle(AddProductCommand command) {
         if (orderConfirmed) {
-            throw new OrderAlreadyConfirmedException(orderId);
+            throw new OrderIsNotConfirmedException(orderId);
         }
 
         String productId = command.getProductId();

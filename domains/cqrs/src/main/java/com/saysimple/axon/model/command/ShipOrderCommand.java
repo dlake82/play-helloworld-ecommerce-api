@@ -1,11 +1,10 @@
 package com.saysimple.axon.model.command;
 
+import com.saysimple.axon.aggregate.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
-import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -13,4 +12,5 @@ import java.util.Objects;
 public class ShipOrderCommand {
     @TargetAggregateIdentifier
     String orderId;
+    OrderStatus status;
 }

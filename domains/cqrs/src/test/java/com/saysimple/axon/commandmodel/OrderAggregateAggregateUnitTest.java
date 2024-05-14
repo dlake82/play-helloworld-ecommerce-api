@@ -1,9 +1,11 @@
 package com.saysimple.axon.commandmodel;
 
 import com.saysimple.axon.exceptions.DuplicateOrderLineException;
-import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
+import com.saysimple.axon.exceptions.OrderIsNotConfirmedException;
 import com.saysimple.axon.exceptions.UnconfirmedOrderException;
-import com.saysimple.axon.model.command.*;
+import com.saysimple.axon.model.command.ConfirmOrderCommand;
+import com.saysimple.axon.model.command.CreateOrderCommand;
+import com.saysimple.axon.model.command.ShipOrderCommand;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.uow.OrderAggregate;
 import org.axonframework.test.aggregate.AggregateTestFixture;
@@ -115,7 +117,7 @@ class OrderAggregateAggregateUnitTest {
     void givenOrderCreatedEventProductAndOrderConfirmedEvent_whenAddProductCommand_thenShouldThrowOrderAlreadyConfirmedException() {
         fixture.given(new OrderCreatedEvent(ORDER_ID), new OrderConfirmedEvent(ORDER_ID))
                 .when(new AddProductCommand(ORDER_ID, PRODUCT_ID))
-                .expectException(OrderAlreadyConfirmedException.class)
+                .expectException(OrderIsNotConfirmedException.class)
                 .expectExceptionMessage(Matchers.predicate(message -> ((String) message).contains(ORDER_ID)));
     }
 
@@ -124,7 +126,7 @@ class OrderAggregateAggregateUnitTest {
     void givenOrderCreatedEventProductAddedEventAndOrderConfirmedEvent_whenIncrementProductCountCommand_thenShouldThrowOrderAlreadyConfirmedException() {
         fixture.given(new OrderCreatedEvent(ORDER_ID), new ProductAddedEvent(ORDER_ID, PRODUCT_ID), new OrderConfirmedEvent(ORDER_ID))
                 .when(new IncrementProductCountCommand(ORDER_ID, PRODUCT_ID))
-                .expectException(OrderAlreadyConfirmedException.class)
+                .expectException(OrderIsNotConfirmedException.class)
                 .expectExceptionMessage(Matchers.predicate(message -> ((String) message).contains(ORDER_ID)));
     }
 
@@ -133,7 +135,7 @@ class OrderAggregateAggregateUnitTest {
     void givenOrderCreatedEventProductAddedEventAndOrderConfirmedEvent_whenDecrementProductCountCommand_thenShouldThrowOrderAlreadyConfirmedException() {
         fixture.given(new OrderCreatedEvent(ORDER_ID), new ProductAddedEvent(ORDER_ID, PRODUCT_ID), new OrderConfirmedEvent(ORDER_ID))
                 .when(new DecrementProductCountCommand(ORDER_ID, PRODUCT_ID))
-                .expectException(OrderAlreadyConfirmedException.class)
+                .expectException(OrderIsNotConfirmedException.class)
                 .expectExceptionMessage(Matchers.predicate(message -> ((String) message).contains(ORDER_ID)));
     }
 }

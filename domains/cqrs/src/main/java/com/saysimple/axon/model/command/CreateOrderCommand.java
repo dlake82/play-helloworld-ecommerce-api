@@ -15,4 +15,6 @@ public class CreateOrderCommand {
     private final String orderId;
     private final String productId;
     private final String userId;
+    private final Integer qty;
+    private final Integer unitPrice;
 }

@@ -115,7 +115,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
         resetWithTwoOrders();
 
-        handler.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
+        orderAggregateOne.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
         handler.on(new UpdateProductQtyCommand((ORDER_ID_1, 3));
 
         assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
