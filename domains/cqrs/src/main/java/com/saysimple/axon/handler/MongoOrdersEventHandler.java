@@ -7,6 +7,7 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.UpdateResult;
 import com.saysimple.axon.aggregate.OrderAggregate;
 import com.saysimple.axon.aggregate.OrderStatus;
+import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.OrderCreatedEvent;
 import com.saysimple.axon.model.event.OrderShippedEvent;
@@ -61,7 +62,9 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderCreatedEvent event) {
-        orders.insertOne(orderToDocument(new OrderAggregate(event.getOrderId(), event.getProductId(), event.getUserId())));
+        orders.insertOne(orderToDocument(new OrderAggregate(
+                new CreateOrderCommand(event.getOrderId(), event.getProductId(), event.getUserId()))
+        ));
     }
 
     @EventHandler

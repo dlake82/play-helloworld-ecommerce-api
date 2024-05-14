@@ -3,7 +3,6 @@ package com.saysimple.axon.uow;
 import com.saysimple.axon.exceptions.DuplicateOrderLineException;
 import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
 import com.saysimple.axon.exceptions.UnconfirmedOrderException;
-import com.saysimple.axon.model.command.AddProductCommand;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.command.ShipOrderCommand;

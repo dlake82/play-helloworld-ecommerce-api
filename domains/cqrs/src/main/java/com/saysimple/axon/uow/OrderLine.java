@@ -1,8 +1,6 @@
 package com.saysimple.axon.uow;
 
 import com.saysimple.axon.exceptions.OrderAlreadyConfirmedException;
-import com.saysimple.axon.model.command.DecrementProductCountCommand;
-import com.saysimple.axon.model.command.IncrementProductCountCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.ProductCountDecrementedEvent;
 import com.saysimple.axon.model.event.ProductCountIncrementedEvent;

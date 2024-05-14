@@ -1,8 +1,8 @@
 package com.saysimple.axon.querymodel;
 
 import com.saysimple.axon.aggregate.OrderAggregate;
-import com.saysimple.axon.aggregate.OrderStatus;
 import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.command.UpdateProductQtyCommand;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
@@ -111,6 +111,28 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
+    @DisplayName("주문의 상품 갯수를 3개로 수정하고 주문 조회 쿼리를 수행하면 주문의 제품 수가 3개로 반환된다.")
+    void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
+        resetWithTwoOrders();
+
+        handler.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
+        handler.on(new UpdateProductQtyCommand((ORDER_ID_1, 3));
+
+        assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
+    }
+
+    @Test
+    @DisplayName("주문 상태를 확인 상태로 수정하고 주문 조회 쿼리를 수행하면 주문의 상태가 확인 상태로 반환된다.")
+    void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
+        resetWithTwoOrders();
+
+        handler.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
+        handler.on(new UpdateProductQtyCommand((ORDER_ID_1, 3));
+
+        assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
+    }
+
+    @Test
     @DisplayName("두 개의 주문을 초기화 한 후 각 주문의 총 배송된 제품 쿼리를 수행하면 각 주문의 제품 수가 반환된다.")
     void givenTwoOrdersPlacedOfWhichOneNotShipped_whenTotalProductsShippedQuery_thenOnlyCountProductsFirstOrder() {
         resetWithTwoOrders();
@@ -127,89 +149,6 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
         assertEquals(4, handler.handle(new TotalProductsShippedQuery(PRODUCT_ID_1)));
         assertEquals(1, handler.handle(new TotalProductsShippedQuery(PRODUCT_ID_2)));
-    }
-
-    @Test
-    @DisplayName("1번 주문에 대한 주문 갱신 쿼리를 수행하면 1번 주문이 반환되고 3개의 제품이 포함되어야 한다.")
-    void givenOrderExist_whenOrderUpdatesQuery_thenOrderReturned() {
-        resetWithTwoOrders();
-
-        OrderAggregate result = handler.handle(new OrderUpdatesQuery(ORDER_ID_1));
-        assertNotNull(result);
-        assertEquals(ORDER_ID_1, result.getOrderId());
-        assertEquals(3, result.getProducts()
-                .get(PRODUCT_ID_1));
-        assertEquals(OrderStatus.SHIPPED, result.getOrderStatus());
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderExist_whenProductAddedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 감소 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderWithProductExist_whenProductCountDecrementedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-        reset(emitter);
-
-        handler.on(new ProductCountDecrementedEvent(ORDER_ID_1, PRODUCT_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 제거 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderWithProductExist_whenProductRemovedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-        reset(emitter);
-
-        handler.on(new ProductRemovedEvent(ORDER_ID_1, PRODUCT_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 상품 증가 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderWithProductExist_whenProductCountIncrementedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-        reset(emitter);
-
-        handler.on(new ProductCountIncrementedEvent(ORDER_ID_1, PRODUCT_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 주문 확인 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderWithProductExist_whenOrderConfirmedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-        reset(emitter);
-
-        handler.on(new OrderConfirmedEvent(ORDER_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
-    }
-
-    @Test
-    @DisplayName("주문 생성 이벤트가 발생하고 상품 추가 이벤트가 발생하고 주문 배송 이벤트가 발생하면 주문 갱신 쿼리가 한 번 발생해야 한다.")
-    void givenOrderWithProductAndConfirmationExist_whenOrderShippedEvent_thenUpdateEmittedOnce() {
-        handler.on(new OrderCreatedEvent(ORDER_ID_1));
-        handler.on(new ProductAddedEvent(ORDER_ID_1, PRODUCT_ID_1));
-        reset(emitter);
-
-        handler.on(new OrderShippedEvent(ORDER_ID_1));
-
-        verify(emitter, times(1)).emit(eq(OrderUpdatesQuery.class), any(), any(OrderAggregate.class));
     }
 
     private void resetWithTwoOrders() {

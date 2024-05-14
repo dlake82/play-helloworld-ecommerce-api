@@ -37,12 +37,15 @@ class OrderAggregateQueryServiceIntegrationTest {
     @Autowired
     OrdersEventHandler handler;
     private String orderId;
+    private String userId;
 
     @BeforeEach
     void setUp() {
         orderId = UUID.randomUUID()
                 .toString();
-        OrderAggregate orderAggregate = new OrderAggregate(orderId);
+        userId = UUID.randomUUID()
+                .toString();
+        OrderAggregate orderAggregate = new OrderAggregate(orderId, productId, userId);
         handler.reset(Collections.singletonList(orderAggregate));
     }
 
@@ -69,9 +72,7 @@ class OrderAggregateQueryServiceIntegrationTest {
 
     @Test
     void givenThreeDeluxeChairsShipped_whenCallingAllShippedChairs_then234PlusTreeIsReturned() {
-        OrderAggregate orderAggregate = new OrderAggregate(orderId);
-        orderAggregate.getProducts()
-                .put(productId, 3);
+        OrderAggregate orderAggregate = new OrderAggregate(orderId, productId, userId);
         orderAggregate.setOrderShipped();
         handler.reset(Collections.singletonList(orderAggregate));
 

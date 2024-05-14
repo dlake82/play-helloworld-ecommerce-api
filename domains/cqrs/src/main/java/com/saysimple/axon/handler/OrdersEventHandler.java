@@ -1,6 +1,7 @@
 package com.saysimple.axon.handler;
 
 import com.saysimple.axon.aggregate.OrderAggregate;
+import com.saysimple.axon.model.command.UpdateProductQtyCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.OrderCreatedEvent;
 import com.saysimple.axon.model.event.OrderShippedEvent;
@@ -18,6 +19,8 @@ public interface OrdersEventHandler {
     void on(OrderConfirmedEvent event);
 
     void on(OrderShippedEvent event);
+
+    void on(UpdateProductQtyCommand command);
 
     List<OrderAggregate> handle(FindAllOrderedProductsQuery query);
 

@@ -1,17 +1,15 @@
 package com.saysimple.axon.controller;
 
-import com.saysimple.axon.model.command.AddProductCommand;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.command.ShipOrderCommand;
+import com.saysimple.axon.model.command.UpdateProductQtyCommand;
 import com.saysimple.axon.service.OrderQueryService;
+import com.saysimple.axon.vo.CreateOrderRequest;
 import com.saysimple.axon.vo.OrderResponse;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -30,21 +28,25 @@ public class OrdersController {
     }
 
     @PostMapping("/order")
-    public CompletableFuture<String> createOrder() {
-        return commandGateway.send(new CreateOrderCommand((UUID.randomUUID().toString())));
+    public CompletableFuture<String> createOrder(
+            @RequestBody CreateOrderRequest req
+    ) {
+        return commandGateway.send(new CreateOrderCommand(UUID.randomUUID().toString(), req.getProductId(), req.getUserId()));
     }
 
-    @PostMapping("/order/{order-id}/product/{product-id}")
-    public CompletableFuture<Void> addProduct(@PathVariable("order-id") String orderId, @PathVariable("product-id") String productId) {
-        return commandGateway.send(new AddProductCommand(orderId, productId));
+    @PutMapping("/order/{order-id}/{qty}")
+    public CompletableFuture<Void> updateQty(
+            @PathVariable("order-id") String orderId,
+            @PathVariable("qty") Integer qty) {
+        return commandGateway.send(new UpdateProductQtyCommand(orderId, qty));
     }
 
-    @PostMapping("/order/{order-id}/confirm")
+    @PutMapping("/order/{order-id}/confirm")
     public CompletableFuture<Void> confirmOrder(@PathVariable("order-id") String orderId) {
         return commandGateway.send(new ConfirmOrderCommand(orderId));
     }
 
-    @PostMapping("/order/{order-id}/ship")
+    @PutMapping("/order/{order-id}/ship")
     public CompletableFuture<Void> shipOrder(@PathVariable("order-id") String orderId) {
         return commandGateway.send(new ShipOrderCommand(orderId));
     }
