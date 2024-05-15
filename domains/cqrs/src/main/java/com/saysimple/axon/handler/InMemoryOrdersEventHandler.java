@@ -5,6 +5,7 @@ import com.saysimple.axon.aggregate.OrderStatus;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.OrderCreatedEvent;
 import com.saysimple.axon.model.event.OrderShippedEvent;
+import com.saysimple.axon.model.event.ProductQtyUpdatedEvent;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -27,7 +28,6 @@ import java.util.Map;
 @ProcessingGroup("orders")
 @Profile("!mongo")
 public class InMemoryOrdersEventHandler implements OrdersEventHandler {
-
     private final Map<String, OrderAggregate> orders = new HashMap<>();
     private final QueryUpdateEmitter emitter;
 
@@ -37,16 +37,13 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderCreatedEvent event) {
-        String orderId = event.getOrderId();
-        String productId = event.getProductId();
-        String userId = event.getUserId();
-        orders.put(orderId, new OrderAggregate(orderId, productId, userId));
+        orders.put(event.getOrderId(), new OrderAggregate(event));
     }
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
         orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.setOrderConfirmed();
+            order.setConfirmed();
             emitUpdate(order);
             return order;
         });
@@ -55,7 +52,16 @@ public class InMemoryOrdersEventHandler implements OrdersEventHandler {
     @EventHandler
     public void on(OrderShippedEvent event) {
         orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
-            order.setOrderShipped();
+            order.setShipped();
+            emitUpdate(order);
+            return order;
+        });
+    }
+
+    @EventHandler
+    public void on(ProductQtyUpdatedEvent event) {
+        orders.computeIfPresent(event.getOrderId(), (orderId, order) -> {
+            order.setQty(event.getQty());
             emitUpdate(order);
             return order;
         });

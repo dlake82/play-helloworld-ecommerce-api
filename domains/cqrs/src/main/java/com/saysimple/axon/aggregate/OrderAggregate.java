@@ -1,9 +1,11 @@
 package com.saysimple.axon.aggregate;
 
 import com.saysimple.axon.exceptions.OrderIsNotConfirmedException;
+import com.saysimple.axon.exceptions.ProductQtyLessThenOneException;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.command.ShipOrderCommand;
+import com.saysimple.axon.model.command.UpdateProductQtyCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.OrderCreatedEvent;
 import com.saysimple.axon.model.event.OrderShippedEvent;
@@ -37,6 +39,24 @@ public class OrderAggregate {
         apply(new OrderCreatedEvent(command));
     }
 
+    public OrderAggregate(OrderCreatedEvent event) {
+        this.orderId = event.getOrderId();
+        this.productId = event.getProductId();
+        this.userId = event.getUserId();
+        this.qty = event.getQty();
+        this.unitPrice = event.getUnitPrice();
+        this.totalPrice = event.getTotalPrice();
+        this.orderStatus = OrderStatus.CREATED;
+    }
+
+    public void setConfirmed() {
+        this.orderStatus = OrderStatus.CONFIRMED;
+    }
+
+    public void setShipped() {
+        this.orderStatus = OrderStatus.SHIPPED;
+    }
+
     @CommandHandler
     public void handle(ConfirmOrderCommand command) {
         apply(new OrderConfirmedEvent(command.getOrderId()));
@@ -47,7 +67,15 @@ public class OrderAggregate {
         if (orderStatus != OrderStatus.CONFIRMED) {
             throw new OrderIsNotConfirmedException(command.getOrderId(), command.getStatus());
         }
+        apply(new OrderShippedEvent(command.getOrderId()));
+    }
 
+    @CommandHandler
+    public void handle(UpdateProductQtyCommand command) {
+        Integer qty = command.getQty();
+        if (qty < 1) {
+            throw new ProductQtyLessThenOneException(qty);
+        }
         apply(new OrderShippedEvent(command.getOrderId()));
     }
 
@@ -66,5 +94,15 @@ public class OrderAggregate {
     public void on(ProductQtyUpdatedEvent event) {
         this.qty = event.getQty();
         this.totalPrice = this.qty * this.unitPrice;
+    }
+
+    @EventSourcingHandler
+    public void on(OrderConfirmedEvent event) {
+        this.orderStatus = OrderStatus.CONFIRMED;
+    }
+
+    @EventSourcingHandler
+    public void on(OrderShippedEvent event) {
+        this.orderStatus = OrderStatus.SHIPPED;
     }
 }

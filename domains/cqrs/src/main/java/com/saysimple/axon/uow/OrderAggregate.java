@@ -1,7 +1,5 @@
 package com.saysimple.axon.uow;
 
-import com.saysimple.axon.exceptions.DuplicateOrderLineException;
-import com.saysimple.axon.exceptions.OrderIsNotConfirmedException;
 import com.saysimple.axon.exceptions.UnconfirmedOrderException;
 import com.saysimple.axon.model.command.ConfirmOrderCommand;
 import com.saysimple.axon.model.command.CreateOrderCommand;
@@ -30,24 +28,11 @@ public class OrderAggregate {
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
-        apply(new OrderCreatedEvent(command.getOrderId(), command.getProductId(), command.getUserId()));
+        apply(new OrderCreatedEvent(command));
     }
 
     protected OrderAggregate() {
         // Required by Axon to build a default Aggregate prior to Event Sourcing
-    }
-
-    @CommandHandler
-    public void handle(AddProductCommand command) {
-        if (orderConfirmed) {
-            throw new OrderIsNotConfirmedException(orderId);
-        }
-
-        String productId = command.getProductId();
-        if (orderLines.containsKey(productId)) {
-            throw new DuplicateOrderLineException(productId);
-        }
-        apply(new ProductAddedEvent(orderId, productId));
     }
 
     @CommandHandler

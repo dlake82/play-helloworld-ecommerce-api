@@ -148,14 +148,16 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
     }
 
     private OrderAggregate documentToOrder(@NonNull Document document) {
-        OrderAggregate orderAggregate = new OrderAggregate(document.getString(ORDER_ID_PROPERTY_NAME), document.getString(PRODUCTS_PROPERTY_NAME), document.getString(USERS_PROPERTY_NAME));
+        OrderAggregate orderAggregate = new OrderAggregate(new CreateOrderCommand(
+                document.getString(ORDER_ID_PROPERTY_NAME), document.getString(PRODUCTS_PROPERTY_NAME), document.getString(USERS_PROPERTY_NAME), 1, 1000
+        ));
         String status = document.getString(ORDER_STATUS_PROPERTY_NAME);
         if (OrderStatus.CONFIRMED.toString()
                 .equals(status)) {
-            orderAggregate.setOrderConfirmed();
+            orderAggregate.setConfirmed();
         } else if (OrderStatus.SHIPPED.toString()
                 .equals(status)) {
-            orderAggregate.setOrderShipped();
+            orderAggregate.setShipped();
         }
         return orderAggregate;
     }

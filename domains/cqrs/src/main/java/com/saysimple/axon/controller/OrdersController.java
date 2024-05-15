@@ -31,7 +31,7 @@ public class OrdersController {
     public CompletableFuture<String> createOrder(
             @RequestBody CreateOrderRequest req
     ) {
-        return commandGateway.send(new CreateOrderCommand(UUID.randomUUID().toString(), req.getProductId(), req.getUserId()));
+        return commandGateway.send(new CreateOrderCommand(UUID.randomUUID().toString(), req.getProductId(), req.getUserId(), 1, 1000));
     }
 
     @PutMapping("/order/{order-id}/{qty}")

@@ -2,6 +2,7 @@ package com.saysimple.axon.querymodel;
 
 import com.saysimple.axon.aggregate.OrderAggregate;
 import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.command.UpdateProductQtyCommand;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
@@ -45,9 +46,9 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
 
     @BeforeAll
     static void createOrders() {
-        orderAggregateOne = new OrderAggregate(ORDER_ID_1, PRODUCT_ID_1, USER_ID_1);
-        orderAggregateTwo = new OrderAggregate(ORDER_ID_2, PRODUCT_ID_2, USER_ID_2);
-        orderAggregateTwo.setOrderConfirmed();
+        orderAggregateOne = new OrderAggregate(new CreateOrderCommand(ORDER_ID_1, PRODUCT_ID_1, USER_ID_1, 1, 1000));
+        orderAggregateTwo = new OrderAggregate(new CreateOrderCommand(ORDER_ID_2, PRODUCT_ID_2, USER_ID_2, 1, 1000));
+        orderAggregateTwo.setConfirmed();
     }
 
     @BeforeEach
@@ -116,7 +117,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
         resetWithTwoOrders();
 
         orderAggregateOne.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
-        handler.on(new UpdateProductQtyCommand((ORDER_ID_1, 3));
+        handler.on(new UpdateProductQtyCommand(ORDER_ID_1, 3);
 
         assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
     }
@@ -126,8 +127,7 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
         resetWithTwoOrders();
 
-        handler.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
-        handler.on(new UpdateProductQtyCommand((ORDER_ID_1, 3));
+        orderAggregateOne.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
 
         assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
     }
