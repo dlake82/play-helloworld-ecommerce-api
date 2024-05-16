@@ -3,12 +3,14 @@ package com.saysimple.axon.querymodel;
 import com.saysimple.axon.OrderApplication;
 import com.saysimple.axon.aggregate.OrderAggregate;
 import com.saysimple.axon.handler.OrdersEventHandler;
+import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.event.*;
 import com.saysimple.axon.service.OrderQueryService;
 import com.saysimple.axon.vo.OrderResponse;
 import com.saysimple.axon.vo.OrderStatusResponse;
 import org.axonframework.eventhandling.gateway.EventGateway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +47,7 @@ class OrderAggregateQueryServiceIntegrationTest {
                 .toString();
         userId = UUID.randomUUID()
                 .toString();
-        OrderAggregate orderAggregate = new OrderAggregate(orderId, productId, userId);
+        OrderAggregate orderAggregate = new OrderAggregate(new CreateOrderCommand(orderId, productId, userId, 1, 1000));
         handler.reset(Collections.singletonList(orderAggregate));
     }
 
@@ -56,9 +58,8 @@ class OrderAggregateQueryServiceIntegrationTest {
         assertEquals(1, result.size());
         OrderResponse response = result.get(0);
         assertEquals(orderId, response.getOrderId());
+        assertEquals(productId, response.getProductId());
         assertEquals(OrderStatusResponse.CREATED, response.getOrderStatus());
-        assertTrue(response.getProducts()
-                .isEmpty());
     }
 
     @Test
@@ -72,27 +73,24 @@ class OrderAggregateQueryServiceIntegrationTest {
 
     @Test
     void givenThreeDeluxeChairsShipped_whenCallingAllShippedChairs_then234PlusTreeIsReturned() {
-        OrderAggregate orderAggregate = new OrderAggregate(orderId, productId, userId);
-        orderAggregate.setOrderShipped();
+        OrderAggregate orderAggregate = new OrderAggregate(new CreateOrderCommand(orderId, productId, userId, 1, 1000));
+        orderAggregate.setShipped();
         handler.reset(Collections.singletonList(orderAggregate));
 
         assertEquals(237, queryService.totalShipped(productId));
     }
 
     @Test
+    @DisplayName("주문 생성 및 상품  확인하고 배송하면 업데이트된 주문이 반환된다.")
     void givenOrdersAreUpdated_whenCallingOrderUpdates_thenUpdatesReturned() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(this::addIncrementDecrementConfirmAndShip, 100L, TimeUnit.MILLISECONDS);
         try {
             StepVerifier.create(queryService.orderUpdates(orderId))
-                    .assertNext(order -> assertTrue(order.getProducts()
-                            .isEmpty()))
-                    .assertNext(order -> assertEquals(1, order.getProducts()
-                            .get(productId)))
-                    .assertNext(order -> assertEquals(2, order.getProducts()
-                            .get(productId)))
-                    .assertNext(order -> assertEquals(1, order.getProducts()
-                            .get(productId)))
+                    .assertNext(order -> assertEquals(productId, order.getProductId()))
+                    .assertNext(order -> assertEquals(1, order.getQty()))
+                    .assertNext(order -> assertEquals(2, order.getQty()))
+                    .assertNext(order -> assertEquals(1, order.getQty()))
                     .assertNext(order -> assertEquals(OrderStatusResponse.CONFIRMED, order.getOrderStatus()))
                     .assertNext(order -> assertEquals(OrderStatusResponse.SHIPPED, order.getOrderStatus()))
                     .thenCancel()
@@ -103,35 +101,25 @@ class OrderAggregateQueryServiceIntegrationTest {
     }
 
     private void addIncrementDecrementConfirmAndShip() {
-        sendProductAddedEvent();
         sendProductCountIncrementEvent();
         sendProductCountDecrementEvent();
         sendOrderConfirmedEvent();
         sendOrderShippedEvent();
     }
 
-    private void sendProductAddedEvent() {
-        ProductAddedEvent event = new ProductAddedEvent(orderId, productId);
-        eventGateway.publish(event);
-    }
-
     private void sendProductCountIncrementEvent() {
-        ProductCountIncrementedEvent event = new ProductCountIncrementedEvent(orderId, productId);
-        eventGateway.publish(event);
+        eventGateway.publish(new ProductQtyUpdatedEvent(orderId, 2));
     }
 
     private void sendProductCountDecrementEvent() {
-        ProductCountDecrementedEvent event = new ProductCountDecrementedEvent(orderId, productId);
-        eventGateway.publish(event);
+        eventGateway.publish(new ProductQtyUpdatedEvent(orderId, 1));
     }
 
     private void sendOrderConfirmedEvent() {
-        OrderConfirmedEvent event = new OrderConfirmedEvent(orderId);
-        eventGateway.publish(event);
+        eventGateway.publish(new OrderConfirmedEvent(orderId));
     }
 
     private void sendOrderShippedEvent() {
-        OrderShippedEvent event = new OrderShippedEvent(orderId);
-        eventGateway.publish(event);
+        eventGateway.publish(new OrderShippedEvent(orderId));
     }
 }

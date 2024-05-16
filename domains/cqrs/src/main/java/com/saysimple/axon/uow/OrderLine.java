@@ -25,28 +25,6 @@ public class OrderLine {
         this.count = 1;
     }
 
-    @CommandHandler
-    public void handle(IncrementProductCountCommand command) {
-        if (orderConfirmed) {
-            throw new OrderIsNotConfirmedException(command.getOrderId());
-        }
-
-        apply(new ProductCountIncrementedEvent(command.getOrderId(), productId));
-    }
-
-    @CommandHandler
-    public void handle(DecrementProductCountCommand command) {
-        if (orderConfirmed) {
-            throw new OrderIsNotConfirmedException(command.getOrderId());
-        }
-
-        if (count <= 1) {
-            apply(new ProductRemovedEvent(command.getOrderId(), productId));
-        } else {
-            apply(new ProductCountDecrementedEvent(command.getOrderId(), productId));
-        }
-    }
-
     @EventSourcingHandler
     public void on(ProductCountIncrementedEvent event) {
         this.count++;

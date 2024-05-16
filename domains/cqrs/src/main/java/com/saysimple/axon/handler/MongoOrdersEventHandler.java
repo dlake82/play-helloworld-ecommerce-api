@@ -11,6 +11,7 @@ import com.saysimple.axon.model.command.CreateOrderCommand;
 import com.saysimple.axon.model.event.OrderConfirmedEvent;
 import com.saysimple.axon.model.event.OrderCreatedEvent;
 import com.saysimple.axon.model.event.OrderShippedEvent;
+import com.saysimple.axon.model.event.ProductQtyUpdatedEvent;
 import com.saysimple.axon.model.query.FindAllOrderedProductsQuery;
 import com.saysimple.axon.model.query.OrderUpdatesQuery;
 import com.saysimple.axon.model.query.TotalProductsShippedQuery;
@@ -62,19 +63,22 @@ public class MongoOrdersEventHandler implements OrdersEventHandler {
 
     @EventHandler
     public void on(OrderCreatedEvent event) {
-        orders.insertOne(orderToDocument(new OrderAggregate(
-                new CreateOrderCommand(event.getOrderId(), event.getProductId(), event.getUserId()))
-        ));
+        orders.insertOne(orderToDocument(new OrderAggregate(event)));
     }
 
     @EventHandler
     public void on(OrderConfirmedEvent event) {
-        update(event.getOrderId(), OrderAggregate::setOrderConfirmed);
+        update(event.getOrderId(), OrderAggregate::setConfirmed);
     }
 
     @EventHandler
     public void on(OrderShippedEvent event) {
-        update(event.getOrderId(), OrderAggregate::setOrderShipped);
+        update(event.getOrderId(), OrderAggregate::setShipped);
+    }
+
+    @Override
+    public void on(ProductQtyUpdatedEvent event) {
+        update(event.getOrderId(), o -> o.setQty(event.getQty()));
     }
 
     @QueryHandler

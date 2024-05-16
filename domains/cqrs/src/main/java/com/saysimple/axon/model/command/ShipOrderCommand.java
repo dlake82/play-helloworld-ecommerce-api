@@ -10,7 +10,5 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ShipOrderCommand {
-    @TargetAggregateIdentifier
-    String orderId;
-    OrderStatus status;
+    private @TargetAggregateIdentifier String orderId;
 }

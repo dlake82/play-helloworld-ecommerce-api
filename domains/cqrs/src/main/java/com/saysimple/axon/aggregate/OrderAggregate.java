@@ -65,7 +65,7 @@ public class OrderAggregate {
     @CommandHandler
     public void handle(ShipOrderCommand command) {
         if (orderStatus != OrderStatus.CONFIRMED) {
-            throw new OrderIsNotConfirmedException(command.getOrderId(), command.getStatus());
+            throw new OrderIsNotConfirmedException(command.getOrderId());
         }
         apply(new OrderShippedEvent(command.getOrderId()));
     }

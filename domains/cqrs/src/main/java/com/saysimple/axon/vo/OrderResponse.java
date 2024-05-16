@@ -13,6 +13,9 @@ public class OrderResponse {
     private String orderId;
     private String productId;
     private String userId;
+    private Integer qty;
+    private Integer unitPrice;
+    private Integer totalPrice;
     private OrderStatusResponse orderStatus;
 
     public OrderResponse(OrderAggregate orderAggregate) {

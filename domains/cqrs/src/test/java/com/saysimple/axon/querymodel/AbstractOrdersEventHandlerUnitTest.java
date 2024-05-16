@@ -112,17 +112,6 @@ public abstract class AbstractOrdersEventHandlerUnitTest {
     }
 
     @Test
-    @DisplayName("주문의 상품 갯수를 3개로 수정하고 주문 조회 쿼리를 수행하면 주문의 제품 수가 3개로 반환된다.")
-    void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
-        resetWithTwoOrders();
-
-        orderAggregateOne.handle(new UpdateProductQtyCommand(ORDER_ID_1, 3));
-        handler.on(new UpdateProductQtyCommand(ORDER_ID_1, 3);
-
-        assertEquals(3, handler.handle(new OrderUpdatesQuery(ORDER_ID_1)));
-    }
-
-    @Test
     @DisplayName("주문 상태를 확인 상태로 수정하고 주문 조회 쿼리를 수행하면 주문의 상태가 확인 상태로 반환된다.")
     void givenOrderPlaced_whenOrderUpdatesQuery_thenOrderHasThreeProducts() {
         resetWithTwoOrders();
