@@ -1,6 +1,7 @@
 package com.saysimple.supports.service;
 
 import com.saysimple.supports.vo.RequestSupport;
+import com.saysimple.supports.vo.RequestUpdateSupport;
 import com.saysimple.supports.vo.ResponseSupport;
 
 import java.util.List;
@@ -10,9 +11,9 @@ public interface SupportService {
 
     List<ResponseSupport> list();
 
-    ResponseSupport get(String productId);
+    ResponseSupport get(String supportId);
 
-    ResponseSupport update(SupportRequestUpdate product);
+    ResponseSupport update(RequestUpdateSupport support);
 
     void delete(String supportId);
 }

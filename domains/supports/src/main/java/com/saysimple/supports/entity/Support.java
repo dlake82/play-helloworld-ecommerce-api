@@ -1,7 +1,11 @@
 package com.saysimple.supports.entity;
 
+import com.saysimple.supports.enums.ContactEnumType;
+import com.saysimple.supports.enums.ProductEnumType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,6 +16,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @DynamicInsert
+@Setter
+@Getter
 @Table(name = "support")
 public class Support implements Serializable {
     @Id
@@ -37,12 +43,13 @@ public class Support implements Serializable {
     private String content;
 
     @Column(nullable = false)
-    private String contactChoice;
+    private ContactEnumType contactChoice;
 
     @Column(nullable = false)
     private String returnChoice;
 
-    private String productImages;
+    @Column(nullable = false)
+    private ProductEnumType productImages;
 
     @CreatedDate
     @Column(updatable = false)
