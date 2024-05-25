@@ -10,6 +10,7 @@ include("domains:users")
 include("domains:products")
 include("domains:catalogs")
 include("domains:orders")
+include("domains:supports")
 include("domains:reviews")
 include("domains:cqrs")
 
