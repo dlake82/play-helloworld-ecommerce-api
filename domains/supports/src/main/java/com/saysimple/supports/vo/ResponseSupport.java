@@ -13,4 +13,12 @@ public class ResponseSupport {
     private String contactChoice;
     private String returnChoice;
     private String productImages;
+
+//    public String getSupportId() {
+//        return supportId;
+//    }
+//
+//    public void setSupportId( supportId) {
+//        this.supportId = supportId;
+//    }
 }

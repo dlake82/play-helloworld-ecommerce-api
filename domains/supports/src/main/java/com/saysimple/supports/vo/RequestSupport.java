@@ -13,7 +13,7 @@ public class RequestSupport {
 
     @NotNull(message = "userId cannot be null")
     private String userId;
-
+    private String categoryId;
     private String title;
     private String content;
     private String contactChoice;
