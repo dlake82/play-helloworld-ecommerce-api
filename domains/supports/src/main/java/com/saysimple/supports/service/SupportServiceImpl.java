@@ -25,13 +25,16 @@ public class SupportServiceImpl implements SupportService {
 
     @Autowired
     public SupportServiceImpl(SupportRepository supportRepository) {
-        this.supportRepository = supportRepository; }
+        this.supportRepository = supportRepository;
+    }
 
     // 문의내역 생성
     @Override
     public ResponseSupport create(RequestSupport support) {
         try {
             Support supportEntity = ModelUtils.strictMap(support, Support.class);
+            supportEntity.setContactChoice(ContactEnumType.valueOf(support.getContactChoice()));
+            supportEntity.setReturnChoice(ProductEnumType.valueOf(support.getReturnChoice()));
             supportRepository.save(supportEntity);
             return ModelUtils.map(supportEntity, ResponseSupport.class);
         } catch (Exception e) {
@@ -39,6 +42,7 @@ public class SupportServiceImpl implements SupportService {
             throw new RuntimeException("문의내역 생성 중에 오류가 발생했습니다.");
         }
     }
+
     //전체 리스트 조회
     @Override
     public List<ResponseSupport> list() {
@@ -69,9 +73,8 @@ public class SupportServiceImpl implements SupportService {
 
         supportEntity.setTitle(support.getTitle());
         supportEntity.setContent(support.getContent());
-        supportEntity.setReturnChoice(support.getReturnChoice());
+        supportEntity.setReturnChoice(ProductEnumType.valueOf(support.getReturnChoice()));
         supportEntity.setContactChoice(ContactEnumType.valueOf(support.getContactChoice()));
-        supportEntity.setProductImages(ProductEnumType.valueOf(support.getProductImages()));
 
         return ModelUtils.map(supportRepository.save(supportEntity), ResponseSupport.class);
     }

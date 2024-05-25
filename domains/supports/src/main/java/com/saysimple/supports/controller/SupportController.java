@@ -5,6 +5,7 @@ import com.saysimple.supports.vo.RequestSupport;
 import com.saysimple.supports.vo.RequestUpdateSupport;
 import com.saysimple.supports.vo.ResponseSupport;
 import io.micrometer.core.annotation.Timed;
+import lombok.extern.slf4j.Slf4j;
 import org.saysimple.aop.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/supports")
 public class SupportController {
@@ -41,6 +43,7 @@ public class SupportController {
 
     @PostMapping("/supports")
     public ResponseEntity<ResponseSupport> create(@RequestBody RequestSupport support) throws NotFoundException {
+        log.info(support.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(supportService.create(support));
     }
 

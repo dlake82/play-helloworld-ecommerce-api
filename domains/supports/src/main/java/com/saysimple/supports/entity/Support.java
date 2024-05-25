@@ -46,10 +46,10 @@ public class Support implements Serializable {
     private ContactEnumType contactChoice;
 
     @Column(nullable = false)
-    private String returnChoice;
+    private ProductEnumType returnChoice;
 
     @Column(nullable = false)
-    private ProductEnumType productImages;
+    private String productImages;
 
     @CreatedDate
     @Column(updatable = false)
