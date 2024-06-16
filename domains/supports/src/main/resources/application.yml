@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: reviews
+    name: supports
   #    zipkin:
   #      base-url: http://13.124.192.188:9411
   #      enabled: true
@@ -45,13 +45,13 @@ eureka:
   #    ip-address: ${server.address}
   client:
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://127.0.0.1:8762/eureka
     fetch-registry: true
     register-with-eureka: true
 
 logging:
   level:
-    com.saysimple.products.client: DEBUG
+    com.saysimple.supports.client: DEBUG
   pattern:
     level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 
